@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Mail, Phone, MapPin, ChevronRight, ShieldCheck } from 'lucide-react';
+import KeralaEmblem from '../ui/KeralaEmblem';
 
 export default function Footer() {
   return (
@@ -8,16 +9,20 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-10">
           {/* Column 1: Brand & Identity (span 4) */}
           <div className="lg:col-span-4 space-y-4">
-            <Link to="/" className="flex items-center gap-3 group">
-              <span className="text-3xl p-2 bg-white/10 rounded-xl border border-[#c9a227]/40 shadow-inner">
-                🏛️
-              </span>
+            <Link to="/" className="flex items-center gap-3 group select-none">
+              <KeralaEmblem size={44} />
               <div>
-                <div className="font-extrabold text-lg text-[#c9a227] tracking-tight group-hover:text-[#e5c060] transition-colors">
-                  CM Keralam
+                <div className="flex items-center gap-2">
+                  <span className="font-extrabold text-lg tracking-tight text-white group-hover:text-emerald-100 transition-colors">
+                    CM <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#ffe082] via-[#f7cb45] to-[#e5a824]">Keralam</span>
+                  </span>
+                  <span className="px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider bg-[#c9a227]/25 text-[#ffe082] border border-[#c9a227]/40 shadow-2xs">
+                    Official
+                  </span>
                 </div>
-                <div className="text-xs text-green-200 uppercase tracking-wider font-medium">
-                  Public Grievance Redressal Portal
+                <div className="text-[11px] text-emerald-200 uppercase tracking-wider font-medium flex items-center gap-1.5 mt-0.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#e5c060] inline-block shrink-0" />
+                  <span>Public Grievance Redressal Portal</span>
                 </div>
               </div>
             </Link>

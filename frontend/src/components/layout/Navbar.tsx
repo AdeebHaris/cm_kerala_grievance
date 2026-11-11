@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
+import KeralaEmblem from '../ui/KeralaEmblem';
 import { getUser } from '../../lib/auth';
 
 const navLinks = [
@@ -20,12 +21,22 @@ export default function Navbar() {
     <nav className="bg-[#1a5c38] text-white shadow-lg sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <Link to="/" className="flex items-center gap-3">
-            <span className="text-2xl">🏛️</span>
-            <div className="leading-tight">
-              <div className="font-bold text-sm sm:text-base text-[#c9a227]">CM Keralam</div>
-              <div className="text-xs text-green-200 hidden sm:block">Grievance Portal</div>
+          {/* Logo & Brand Identity */}
+          <Link to="/" className="flex items-center gap-2.5 sm:gap-3 group select-none py-1">
+            <KeralaEmblem size={38} />
+            <div className="flex flex-col leading-tight">
+              <div className="flex items-center gap-1.5">
+                <span className="font-extrabold text-base sm:text-lg tracking-tight text-white group-hover:text-emerald-100 transition-colors">
+                  CM <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#ffe082] via-[#f7cb45] to-[#e5a824]">Keralam</span>
+                </span>
+                <span className="hidden sm:inline-flex items-center px-1.5 py-0.2 rounded text-[9px] font-bold uppercase tracking-wider bg-[#c9a227]/25 text-[#ffe082] border border-[#c9a227]/40 shadow-2xs">
+                  CMO
+                </span>
+              </div>
+              <div className="flex items-center gap-1.5 text-[10px] sm:text-[11px] font-medium tracking-wide text-emerald-200/90 uppercase">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#e5c060] inline-block animate-pulse shrink-0" />
+                <span>Grievance Redressal Portal</span>
+              </div>
             </div>
           </Link>
 
