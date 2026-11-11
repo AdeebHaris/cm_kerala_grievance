@@ -81,20 +81,21 @@ class GrievanceRepository:
         )
         return r.scalars().all()
 
-    async def get_recent_summaries(self, limit: int = 25) -> List[dict]:
-        r = await self.db.execute(
-            select(
-                Grievance.reference_id,
-                Grievance.subject,
-                Grievance.description,
-                Grievance.ai_summary,
-                Grievance.status,
-                Grievance.district,
-                Grievance.category,
-            )
-            .order_by(Grievance.created_at.desc())
-            .limit(limit)
-        )
+    async def get_recent_summaries(
+        self, district: Optional[str] = None, limit: int = 25
+    ) -> List[dict]:
+        q = select(
+            Grievance.reference_id,
+            Grievance.subject,
+            Grievance.description,
+            Grievance.ai_summary,
+            Grievance.status,
+            Grievance.district,
+            Grievance.category,
+        ).order_by(Grievance.created_at.desc())
+        if district:
+            q = q.where(Grievance.district == district)
+        r = await self.db.execute(q.limit(limit))
         return [
             {
                 "reference_id": row[0],

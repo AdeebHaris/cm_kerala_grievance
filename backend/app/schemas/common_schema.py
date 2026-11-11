@@ -14,3 +14,5 @@ class ContactCreate(BaseModel):
 
 class AIAnalyzeRequest(BaseModel):
     description: str
+    district: Optional[str] = None
+    subject: Optional[str] = None

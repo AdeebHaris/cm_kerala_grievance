@@ -52,14 +52,21 @@ export default function SubmitGrievance() {
   });
 
   const descriptionValue = useWatch({ control, name: 'description' });
+  const districtValue = useWatch({ control, name: 'district' });
+  const subjectValue = useWatch({ control, name: 'subject' });
+
+  const [customSummary, setCustomSummary] = useState<string>('');
+  const [isEditingSummary, setIsEditingSummary] = useState<boolean>(false);
 
   const aiMutation = useMutation({
-    mutationFn: async (description: string) => {
-      const res = await api.post('/api/ai/analyze', { description });
+    mutationFn: async (payload: { description: string; district?: string; subject?: string }) => {
+      const res = await api.post('/api/ai/analyze', payload);
       return (res.data?.data ?? res.data) as AIAnalysisResult;
     },
     onSuccess: (data) => {
       setAiResult(data);
+      setCustomSummary(data.summary || '');
+      setIsEditingSummary(false);
       toast.success(
         data.is_fallback
           ? 'Fallback classification generated'
@@ -75,7 +82,7 @@ export default function SubmitGrievance() {
     mutationFn: async (values: GrievanceFormValues) => {
       const payload = {
         ...values,
-        ai_summary: aiResult?.summary || null,
+        ai_summary: (customSummary.trim() || aiResult?.summary) || null,
         ai_category: aiResult?.category || null,
         ai_priority: aiResult?.priority || null,
         ai_department: aiResult?.department || null,
@@ -115,7 +122,11 @@ export default function SubmitGrievance() {
       toast.error('Please enter at least 10 characters in the description first');
       return;
     }
-    aiMutation.mutate(descriptionValue.trim());
+    aiMutation.mutate({
+      description: descriptionValue.trim(),
+      district: districtValue || undefined,
+      subject: subjectValue || undefined,
+    });
   };
 
   const applyAISuggestions = () => {
@@ -380,11 +391,43 @@ export default function SubmitGrievance() {
                     <span className="text-gray-600">Priority:</span>
                     <PriorityBadge priority={aiResult.priority} />
                   </div>
-                  <div className="pt-1 border-t border-amber-200/70">
-                    <span className="text-xs font-semibold text-gray-600 block">
-                      CMO Summary:
-                    </span>
-                    <p className="text-xs text-gray-800 mt-0.5">{aiResult.summary}</p>
+                  <div className="pt-2 border-t border-amber-200/70 space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-semibold text-gray-700">
+                        AI Summary of your issue:
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => setIsEditingSummary(!isEditingSummary)}
+                        className="text-[11px] font-semibold text-[#1a5c38] hover:text-[#2d7a52] hover:underline"
+                      >
+                        {isEditingSummary ? '✓ Done' : '✎ Edit summary'}
+                      </button>
+                    </div>
+
+                    {isEditingSummary ? (
+                      <div className="space-y-1">
+                        <textarea
+                          rows={2}
+                          value={customSummary}
+                          onChange={(e) => setCustomSummary(e.target.value)}
+                          placeholder="Type your own summary..."
+                          maxLength={120}
+                          className="w-full text-xs p-2 border border-amber-300 rounded-lg bg-white focus:outline-none focus:ring-1 focus:ring-[#1a5c38]"
+                        />
+                        <div className="flex justify-between items-center text-[10px] text-gray-500">
+                          <span>Keep it brief for quick officer review</span>
+                          <span>{customSummary.length}/120</span>
+                        </div>
+                      </div>
+                    ) : (
+                      <p className="text-xs text-gray-800 bg-amber-100/60 p-2.5 rounded-lg border border-amber-200/80 font-medium leading-relaxed">
+                        {customSummary || aiResult.summary}
+                      </p>
+                    )}
+                    <p className="text-[10px] text-gray-500">
+                      Officers review this summary first. You can edit it if you want to emphasize specific details.
+                    </p>
                   </div>
                 </div>
 

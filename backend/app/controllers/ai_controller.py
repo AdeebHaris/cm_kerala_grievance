@@ -10,8 +10,13 @@ async def analyze_grievance_ai(req: AIAnalyzeRequest, db: AsyncSession):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="Description too short"
         )
-    recent_grievances = await GrievanceRepository(db).get_recent_summaries(limit=25)
+    # Filter recent grievances by the user's selected district to prevent false cross-district duplicate alerts
+    recent_grievances = await GrievanceRepository(db).get_recent_summaries(
+        district=req.district, limit=25
+    )
     result = await analyze_grievance(
-        req.description.strip(), recent_grievances=recent_grievances
+        req.description.strip(),
+        district=req.district,
+        recent_grievances=recent_grievances,
     )
     return {"success": True, "data": result}

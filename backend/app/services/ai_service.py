@@ -47,7 +47,8 @@ STOPWORDS = {
     "this", "that", "with", "from", "have", "been", "were", "they", "their",
     "there", "about", "which", "when", "what", "where", "very", "more", "some",
     "than", "also", "into", "over", "near", "here", "please", "kindly", "issue",
-    "problem", "grievance", "complaint", "kerala", "days", "week", "month",
+    "problem", "grievance", "complaint", "kerala", "keralam", "days", "week", "month",
+    "road", "street", "area", "water", "heavy", "work", "action", "public", "people",
 }
 
 
@@ -71,17 +72,23 @@ def _tokenize(text: str) -> set[str]:
     return {w for w in words if w not in STOPWORDS}
 
 
-def _find_keyword_duplicates(description: str, recent_grievances: List[dict]) -> List[dict]:
+def _find_keyword_duplicates(
+    description: str, recent_grievances: List[dict], district: Optional[str] = None
+) -> List[dict]:
     desc_tokens = _tokenize(description)
     if not desc_tokens or not recent_grievances:
         return []
     scored = []
     for g in recent_grievances:
+        # If district is known, only match grievances in the exact same district
+        if district and g.get("district") and g.get("district") != district:
+            continue
         g_text = f"{g.get('subject', '')} {g.get('description', '')} {g.get('ai_summary', '')}"
         g_tokens = _tokenize(g_text)
         overlap = desc_tokens & g_tokens
-        if len(overlap) >= 3 or (
-            len(overlap) >= 2 and len(overlap) / max(len(desc_tokens | g_tokens), 1) >= 0.15
+        # Require substantial specific overlap (e.g. 4+ unique tokens or 30%+ Jaccard similarity)
+        if len(overlap) >= 4 or (
+            len(overlap) >= 3 and len(overlap) / max(len(desc_tokens | g_tokens), 1) >= 0.25
         ):
             scored.append((len(overlap), g))
     scored.sort(key=lambda x: x[0], reverse=True)
@@ -96,10 +103,15 @@ def _find_keyword_duplicates(description: str, recent_grievances: List[dict]) ->
 
 
 async def analyze_grievance(
-    description: str, recent_grievances: Optional[List[dict]] = None
+    description: str,
+    district: Optional[str] = None,
+    recent_grievances: Optional[List[dict]] = None,
 ) -> dict:
     recent = recent_grievances or []
-    keyword_candidates = _find_keyword_duplicates(description, recent)
+    if district:
+        recent = [g for g in recent if not g.get("district") or g.get("district") == district]
+
+    keyword_candidates = _find_keyword_duplicates(description, recent, district=district)
     recent_by_ref = {g["reference_id"]: g for g in recent if "reference_id" in g}
 
     recent_context = ""
