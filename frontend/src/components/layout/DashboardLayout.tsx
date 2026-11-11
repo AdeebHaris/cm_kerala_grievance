@@ -44,7 +44,7 @@ export default function DashboardLayout({ title, subtitle, links, children }: Da
           {user?.name?.charAt(0).toUpperCase() || 'U'}
         </div>
         <div className="min-w-0 flex-1">
-          {roleLabel && (
+          {roleLabel && roleLabel.toLowerCase() !== user?.name?.toLowerCase() && (
             <div className="text-[11px] uppercase tracking-wider text-[#e5c060] font-semibold truncate leading-tight">
               {roleLabel}
             </div>

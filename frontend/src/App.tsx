@@ -26,6 +26,7 @@ import CitizenGrievanceDetail from './pages/citizen/CitizenGrievanceDetail';
 
 // CMO pages
 import CMODashboard from './pages/cmo/CMODashboard';
+import CMOManageGrievances from './pages/cmo/CMOManageGrievances';
 import CMOGrievanceDetail from './pages/cmo/CMOGrievanceDetail';
 
 // Officer pages
@@ -105,6 +106,14 @@ export default function App() {
             element={
               <ProtectedRoute role="CMO_ADMIN">
                 <CMODashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/cmo/manage"
+            element={
+              <ProtectedRoute role="CMO_ADMIN">
+                <CMOManageGrievances />
               </ProtectedRoute>
             }
           />
