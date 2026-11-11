@@ -8,7 +8,10 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-10">
           {/* Column 1: Brand & Identity (span 4) */}
           <div className="lg:col-span-4 space-y-4">
-            <Link to="/" className="flex items-center gap-2.5 select-none">
+            <Link
+              to="/"
+              className="flex items-center gap-2.5 select-none outline-none focus:outline-none focus:ring-0 focus-visible:outline-none active:outline-none"
+            >
               <Landmark className="w-6 h-6 text-[#f4d068] shrink-0" />
               <div>
                 <div className="font-semibold text-lg text-white">

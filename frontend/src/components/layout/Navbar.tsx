@@ -36,7 +36,10 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo & Brand Identity */}
-          <Link to="/" className="flex items-center gap-2.5 select-none py-1">
+          <Link
+            to="/"
+            className="flex items-center gap-2.5 select-none py-1 outline-none focus:outline-none focus:ring-0 focus-visible:outline-none active:outline-none"
+          >
             <Landmark className="w-6 h-6 text-[#f4d068] shrink-0" />
             <div className="flex flex-col leading-tight">
               <span className="font-semibold text-lg tracking-tight text-white">
