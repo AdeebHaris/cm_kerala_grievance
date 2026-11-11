@@ -64,7 +64,7 @@ export default function SubmitGrievance() {
   const [isEditingSummary, setIsEditingSummary] = useState<boolean>(false);
 
   const DRAFT_STORAGE_KEY = 'cm_kerala_grievance_draft';
-  const [draftData, setDraftData] = useState<{
+  const [unrestoredDraft, setUnrestoredDraft] = useState<{
     district?: string;
     description?: string;
     subject?: string;
@@ -73,16 +73,15 @@ export default function SubmitGrievance() {
     customSummary?: string;
     savedAt?: string;
   } | null>(null);
-  const [isDraftRestored, setIsDraftRestored] = useState(false);
 
-  // Check for saved draft in localStorage on mount, but keep fields clean until user restores
+  // Check for saved draft in localStorage ONLY on mount (coming back from somewhere)
   useEffect(() => {
     try {
       const raw = localStorage.getItem(DRAFT_STORAGE_KEY);
       if (raw) {
         const parsed = JSON.parse(raw);
         if (parsed.description || parsed.subject || parsed.district) {
-          setDraftData(parsed);
+          setUnrestoredDraft(parsed);
         }
       }
     } catch {
@@ -90,7 +89,7 @@ export default function SubmitGrievance() {
     }
   }, []);
 
-  // Auto-save draft when the user actively types
+  // Quietly auto-save draft in the background as the user types (no annoying popup while typing)
   useEffect(() => {
     if (descriptionValue?.trim() || subjectValue?.trim() || districtValue) {
       try {
@@ -105,8 +104,6 @@ export default function SubmitGrievance() {
           savedAt: now,
         };
         localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(payload));
-        setDraftData(payload);
-        setIsDraftRestored(true);
       } catch {
         // Ignore storage quota
       }
@@ -114,14 +111,14 @@ export default function SubmitGrievance() {
   }, [descriptionValue, districtValue, subjectValue, categoryValue, priorityValue, customSummary]);
 
   const handleRestoreDraft = () => {
-    if (!draftData) return;
-    if (draftData.district) setValue('district', draftData.district, { shouldValidate: true });
-    if (draftData.description) setValue('description', draftData.description, { shouldValidate: true });
-    if (draftData.subject) setValue('subject', draftData.subject, { shouldValidate: true });
-    if (draftData.category) setValue('category', draftData.category, { shouldValidate: true });
-    if (draftData.priority) setValue('priority', draftData.priority as 'LOW' | 'MEDIUM' | 'HIGH', { shouldValidate: true });
-    if (draftData.customSummary) setCustomSummary(draftData.customSummary);
-    setIsDraftRestored(true);
+    if (!unrestoredDraft) return;
+    if (unrestoredDraft.district) setValue('district', unrestoredDraft.district, { shouldValidate: true });
+    if (unrestoredDraft.description) setValue('description', unrestoredDraft.description, { shouldValidate: true });
+    if (unrestoredDraft.subject) setValue('subject', unrestoredDraft.subject, { shouldValidate: true });
+    if (unrestoredDraft.category) setValue('category', unrestoredDraft.category, { shouldValidate: true });
+    if (unrestoredDraft.priority) setValue('priority', unrestoredDraft.priority as 'LOW' | 'MEDIUM' | 'HIGH', { shouldValidate: true });
+    if (unrestoredDraft.customSummary) setCustomSummary(unrestoredDraft.customSummary);
+    setUnrestoredDraft(null);
     toast.success('Draft restored to form');
   };
 
@@ -136,12 +133,11 @@ export default function SubmitGrievance() {
       description: '',
       priority: '',
     });
-    setDraftData(null);
-    setIsDraftRestored(false);
+    setUnrestoredDraft(null);
     setAiResult(null);
     setCustomSummary('');
     setSelectedFile(null);
-    toast.success('Draft deleted and fields cleared');
+    toast.success('Draft deleted');
   };
 
   const aiMutation = useMutation({
@@ -206,8 +202,7 @@ export default function SubmitGrievance() {
       try {
         localStorage.removeItem(DRAFT_STORAGE_KEY);
       } catch {}
-      setDraftData(null);
-      setIsDraftRestored(false);
+      setUnrestoredDraft(null);
       reset();
       setSelectedFile(null);
       setAiResult(null);
@@ -264,31 +259,23 @@ export default function SubmitGrievance() {
       links={citizenSidebarLinks}
     >
       <div className="max-w-4xl mx-auto space-y-6">
-        {/* Auto-save Draft Pill Banner */}
-        {draftData && (
+        {/* Draft Pill Banner (Only shown if returning with a saved draft) */}
+        {unrestoredDraft && (
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-800 shadow-2xs">
             <div className="flex items-center gap-2">
               <FileText className="w-4 h-4 text-[#1a5c38]" />
-              {isDraftRestored ? (
-                <span>
-                  Draft active {draftData.savedAt ? `(saved at ${draftData.savedAt})` : ''} — safe if you navigate back or refresh.
-                </span>
-              ) : (
-                <span>
-                  You have an unsaved draft {draftData.savedAt ? `from ${draftData.savedAt}` : ''}.
-                </span>
-              )}
+              <span>
+                You have a saved draft {unrestoredDraft.savedAt ? `from ${unrestoredDraft.savedAt}` : ''}.
+              </span>
             </div>
             <div className="flex items-center gap-2">
-              {!isDraftRestored && (
-                <button
-                  type="button"
-                  onClick={handleRestoreDraft}
-                  className="inline-flex items-center gap-1 px-3 py-1 rounded-lg bg-[#1a5c38] hover:bg-[#25784c] text-white text-xs font-semibold cursor-pointer shadow-2xs transition-colors"
-                >
-                  Restore Draft
-                </button>
-              )}
+              <button
+                type="button"
+                onClick={handleRestoreDraft}
+                className="inline-flex items-center gap-1 px-3 py-1 rounded-lg bg-[#1a5c38] hover:bg-[#25784c] text-white text-xs font-semibold cursor-pointer shadow-2xs transition-colors"
+              >
+                Restore Draft
+              </button>
               <button
                 type="button"
                 onClick={handleDeleteDraft}
@@ -301,7 +288,7 @@ export default function SubmitGrievance() {
           </div>
         )}
 
-        {/* Step 1: AI Assistant & Natural Language Intake (Comes First) */}
+        {/* AI Grievance Assistant & Natural Language Intake */}
         <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-5">
           <div className="flex items-start justify-between gap-4">
             <div className="flex items-center gap-3">
@@ -309,12 +296,7 @@ export default function SubmitGrievance() {
                 <Sparkles className="w-5 h-5 text-[#e5c060]" />
               </div>
               <div>
-                <div className="flex items-center gap-2">
-                  <h2 className="text-lg font-bold text-gray-900">AI Grievance Assistant</h2>
-                  <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-emerald-100/70 text-[#0f3d25] border border-emerald-200">
-                    Step 1 · Smart Intake
-                  </span>
-                </div>
+                <h2 className="text-lg font-bold text-gray-900">AI Grievance Assistant</h2>
                 <p className="text-xs text-gray-500 mt-0.5">
                   Describe your problem in everyday words. The assistant will detect the responsible department, evaluate urgency, draft a title, and auto-fill your form.
                 </p>
@@ -366,9 +348,8 @@ export default function SubmitGrievance() {
                 type="button"
                 onClick={handleAnalyze}
                 disabled={aiMutation.isPending}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 py-2.5 px-5 rounded-xl bg-[#1a5c38] hover:bg-[#25784c] text-white font-bold text-sm shadow-sm transition-all disabled:opacity-60 cursor-pointer"
+                className="w-full sm:w-auto inline-flex items-center justify-center py-2.5 px-5 rounded-xl bg-[#1a5c38] hover:bg-[#25784c] text-white font-bold text-sm shadow-sm transition-all disabled:opacity-60 cursor-pointer"
               >
-                <Sparkles className="w-4 h-4 text-[#e5c060]" />
                 {aiMutation.isPending ? 'Analyzing & Pre-filling Form...' : 'Analyze & Pre-fill Form with AI'}
               </button>
             </div>
@@ -536,13 +517,13 @@ export default function SubmitGrievance() {
           )}
         </div>
 
-        {/* Step 2: Verification, Editing & Final Submission */}
+        {/* Verification, Editing & Final Submission */}
         <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
           <div className="flex items-center justify-between border-b border-gray-100 pb-3">
             <div>
               <div className="flex items-center gap-2 flex-wrap">
                 <h3 className="text-base font-bold text-gray-900">
-                  Step 2 · Verify & Submit Grievance
+                  Verify & Submit Grievance
                 </h3>
                 {districtValue && (
                   <span className="text-xs font-semibold text-[#1a5c38] bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">

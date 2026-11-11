@@ -1,8 +1,7 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { Menu, X, ChevronDown, LogOut, LayoutDashboard, FileText } from 'lucide-react';
-import { getUser, clearAuth } from '../../lib/auth';
-import toast from 'react-hot-toast';
+import { Link } from 'react-router-dom';
+import { Menu, X, LayoutDashboard } from 'lucide-react';
+import { getUser } from '../../lib/auth';
 
 const navLinks = [
   { label: 'Home', to: '/' },
@@ -15,9 +14,7 @@ const navLinks = [
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
   const user = getUser();
-  const navigate = useNavigate();
 
   const dashboardLink =
     user?.role === 'CMO_ADMIN'
@@ -25,12 +22,6 @@ export default function Navbar() {
       : user?.role === 'OFFICER'
       ? '/officer/dashboard'
       : '/citizen/dashboard';
-
-  const handleLogout = () => {
-    clearAuth();
-    toast.success('Logged out successfully');
-    navigate('/login');
-  };
 
   return (
     <nav className="bg-[#1a5c38] text-white shadow-lg sticky top-0 z-50">
@@ -60,56 +51,22 @@ export default function Navbar() {
 
           {/* Right side */}
           <div className="hidden md:flex items-center gap-2">
-            <Link
-              to="/citizen/submit"
-              className="px-3 py-1.5 text-sm bg-white text-[#1a5c38] rounded hover:bg-gray-100 transition-colors font-semibold"
-            >
-              Submit Grievance
-            </Link>
-            <Link
-              to="/track"
-              className="px-3 py-1.5 text-sm bg-[#c9a227] text-white rounded hover:bg-[#e5c060] transition-colors font-medium"
-            >
-              Track Grievance
-            </Link>
             {user ? (
-              <div className="relative">
-                <button
-                  onClick={() => setDropdownOpen(!dropdownOpen)}
-                  className="flex items-center gap-2 px-3 py-1.5 bg-[#2d7a52] rounded hover:bg-[#0f3d25] transition-colors text-sm"
-                >
-                  <span className="max-w-[120px] truncate">{user.name}</span>
-                  <ChevronDown className="w-4 h-4" />
-                </button>
-                {dropdownOpen && (
-                  <div className="absolute right-0 mt-2 w-48 bg-white text-gray-800 rounded shadow-lg py-1 z-50">
-                    <Link
-                      to={dashboardLink}
-                      onClick={() => setDropdownOpen(false)}
-                      className="flex items-center gap-2 px-4 py-2 text-sm hover:bg-gray-100"
-                    >
-                      <LayoutDashboard className="w-4 h-4" /> Dashboard
-                    </Link>
-                    {user.role === 'CITIZEN' && (
-                      <Link
-                        to="/citizen/submit"
-                        onClick={() => setDropdownOpen(false)}
-                        className="flex items-center gap-2 px-4 py-2 text-sm hover:bg-gray-100"
-                      >
-                        <FileText className="w-4 h-4" /> Submit Grievance
-                      </Link>
-                    )}
-                    <button
-                      onClick={handleLogout}
-                      className="flex items-center gap-2 px-4 py-2 text-sm hover:bg-gray-100 w-full text-left text-red-600"
-                    >
-                      <LogOut className="w-4 h-4" /> Logout
-                    </button>
-                  </div>
-                )}
-              </div>
+              <Link
+                to={dashboardLink}
+                className="flex items-center gap-2 px-3.5 py-1.5 bg-[#2d7a52] rounded-lg hover:bg-[#0f3d25] transition-colors text-sm font-medium"
+              >
+                <LayoutDashboard className="w-4 h-4 text-[#e5c060]" />
+                <span className="max-w-[150px] truncate">{user.name}</span>
+              </Link>
             ) : (
               <>
+                <Link
+                  to="/track"
+                  className="px-3 py-1.5 text-sm bg-[#c9a227] text-white rounded hover:bg-[#e5c060] transition-colors font-medium"
+                >
+                  Track Grievance
+                </Link>
                 <Link
                   to="/login"
                   className="px-3 py-1.5 text-sm border border-white/40 rounded hover:bg-white/10 transition-colors"
@@ -149,31 +106,24 @@ export default function Navbar() {
               {link.label}
             </Link>
           ))}
-          <Link
-            to="/citizen/submit"
-            onClick={() => setMenuOpen(false)}
-            className="block px-3 py-2 text-sm bg-white text-[#1a5c38] rounded font-semibold"
-          >
-            Submit Grievance
-          </Link>
-          <Link
-            to="/track"
-            onClick={() => setMenuOpen(false)}
-            className="block px-3 py-2 text-sm bg-[#c9a227] rounded font-medium"
-          >
-            Track Grievance
-          </Link>
           {user ? (
-            <>
-              <Link to={dashboardLink} onClick={() => setMenuOpen(false)} className="block px-3 py-2 text-sm hover:bg-[#2d7a52] rounded">
-                Dashboard
-              </Link>
-              <button onClick={() => { setMenuOpen(false); handleLogout(); }} className="block px-3 py-2 text-sm text-red-300 w-full text-left">
-                Logout
-              </button>
-            </>
+            <Link
+              to={dashboardLink}
+              onClick={() => setMenuOpen(false)}
+              className="flex items-center gap-2 px-3 py-2 text-sm bg-[#2d7a52] rounded text-white font-medium"
+            >
+              <LayoutDashboard className="w-4 h-4 text-[#e5c060]" />
+              <span>{user.name} (Dashboard)</span>
+            </Link>
           ) : (
             <>
+              <Link
+                to="/track"
+                onClick={() => setMenuOpen(false)}
+                className="block px-3 py-2 text-sm bg-[#c9a227] rounded font-medium text-white"
+              >
+                Track Grievance
+              </Link>
               <Link to="/login" onClick={() => setMenuOpen(false)} className="block px-3 py-2 text-sm hover:bg-[#2d7a52] rounded">Login</Link>
               <Link to="/register" onClick={() => setMenuOpen(false)} className="block px-3 py-2 text-sm bg-white text-[#1a5c38] rounded font-medium">Register</Link>
             </>
