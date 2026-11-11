@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useForm, useWatch } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
@@ -13,6 +13,7 @@ import {
   Building2,
   Tag,
   FileText,
+  RotateCcw,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import DashboardLayout from '../../components/layout/DashboardLayout';
@@ -56,9 +57,79 @@ export default function SubmitGrievance() {
   const descriptionValue = useWatch({ control, name: 'description' });
   const districtValue = useWatch({ control, name: 'district' });
   const subjectValue = useWatch({ control, name: 'subject' });
+  const categoryValue = useWatch({ control, name: 'category' });
+  const priorityValue = useWatch({ control, name: 'priority' });
 
   const [customSummary, setCustomSummary] = useState<string>('');
   const [isEditingSummary, setIsEditingSummary] = useState<boolean>(false);
+
+  const DRAFT_STORAGE_KEY = 'cm_kerala_grievance_draft';
+  const [hasDraft, setHasDraft] = useState(false);
+  const [draftSavedAt, setDraftSavedAt] = useState<string | null>(null);
+
+  // Restore draft from localStorage on mount (preserves input if user clicked back or refreshed)
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(DRAFT_STORAGE_KEY);
+      if (raw) {
+        const draft = JSON.parse(raw);
+        if (draft.description || draft.subject || draft.district) {
+          if (draft.district) setValue('district', draft.district, { shouldValidate: true });
+          if (draft.description) setValue('description', draft.description, { shouldValidate: true });
+          if (draft.subject) setValue('subject', draft.subject, { shouldValidate: true });
+          if (draft.category) setValue('category', draft.category);
+          if (draft.priority) setValue('priority', draft.priority);
+          if (draft.customSummary) setCustomSummary(draft.customSummary);
+          setHasDraft(true);
+          setDraftSavedAt(draft.savedAt || 'recently');
+        }
+      }
+    } catch {
+      // Ignore parse errors
+    }
+  }, [setValue]);
+
+  // Auto-save draft whenever fields change
+  useEffect(() => {
+    if (descriptionValue || subjectValue || districtValue) {
+      try {
+        const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const payload = {
+          district: districtValue || '',
+          description: descriptionValue || '',
+          subject: subjectValue || '',
+          category: categoryValue || 'General',
+          priority: priorityValue || 'MEDIUM',
+          customSummary,
+          savedAt: now,
+        };
+        localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(payload));
+        setHasDraft(true);
+        setDraftSavedAt(now);
+      } catch {
+        // Ignore storage quota
+      }
+    }
+  }, [descriptionValue, districtValue, subjectValue, categoryValue, priorityValue, customSummary]);
+
+  const handleClearDraft = () => {
+    try {
+      localStorage.removeItem(DRAFT_STORAGE_KEY);
+    } catch {}
+    reset({
+      district: '',
+      category: 'General',
+      subject: '',
+      description: '',
+      priority: 'MEDIUM',
+    });
+    setAiResult(null);
+    setCustomSummary('');
+    setSelectedFile(null);
+    setHasDraft(false);
+    setDraftSavedAt(null);
+    toast.success('Form cleared');
+  };
 
   const aiMutation = useMutation({
     mutationFn: async (payload: { description: string; district?: string; subject?: string }) => {
@@ -119,6 +190,11 @@ export default function SubmitGrievance() {
     onSuccess: (grievance) => {
       setCreatedGrievance(grievance);
       toast.success(`Grievance submitted! Ref: ${grievance.reference_id}`);
+      try {
+        localStorage.removeItem(DRAFT_STORAGE_KEY);
+      } catch {}
+      setHasDraft(false);
+      setDraftSavedAt(null);
       reset();
       setSelectedFile(null);
       setAiResult(null);
@@ -175,6 +251,24 @@ export default function SubmitGrievance() {
       links={citizenSidebarLinks}
     >
       <div className="max-w-4xl mx-auto space-y-6">
+        {/* Auto-save Draft Pill Banner */}
+        {hasDraft && (
+          <div className="flex items-center justify-between gap-3 px-4 py-2.5 rounded-xl bg-amber-50/90 border border-amber-200/90 text-xs text-amber-900 shadow-2xs">
+            <span className="flex items-center gap-2 font-medium">
+              <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
+              Your grievance is drafted in this browser {draftSavedAt ? `(${draftSavedAt})` : ''} — safe if you navigate back or refresh.
+            </span>
+            <button
+              type="button"
+              onClick={handleClearDraft}
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white border border-amber-300 text-xs font-semibold text-rose-700 hover:text-rose-900 hover:bg-rose-50 cursor-pointer shadow-2xs transition-colors shrink-0"
+            >
+              <RotateCcw className="w-3 h-3" />
+              Clear fields
+            </button>
+          </div>
+        )}
+
         {/* Step 1: AI Assistant & Natural Language Intake (Comes First) */}
         <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-5">
           <div className="flex items-start justify-between gap-4">
@@ -423,10 +517,15 @@ export default function SubmitGrievance() {
         <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
           <div className="flex items-center justify-between border-b border-gray-100 pb-3">
             <div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-wrap">
                 <h3 className="text-base font-bold text-gray-900">
                   Step 2 · Verify & Submit Grievance
                 </h3>
+                {districtValue && (
+                  <span className="text-xs font-semibold text-[#1a5c38] bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                    District: {districtValue}
+                  </span>
+                )}
                 {aiResult && (
                   <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
                     ✓ Pre-filled by AI
@@ -443,27 +542,7 @@ export default function SubmitGrievance() {
             onSubmit={handleSubmit((data) => submitMutation.mutate(data))}
             className="space-y-4"
           >
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  District *
-                </label>
-                <select
-                  {...register('district', { required: 'Please select a district' })}
-                  className="w-full px-3.5 py-2.5 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-[#1a5c38] text-sm"
-                >
-                  <option value="">Select Keralam District</option>
-                  {KERALA_DISTRICTS.map((d) => (
-                    <option key={d} value={d}>
-                      {d}
-                    </option>
-                  ))}
-                </select>
-                {errors.district && (
-                  <p className="text-xs text-red-600 mt-1">{errors.district.message}</p>
-                )}
-              </div>
-
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Category *
