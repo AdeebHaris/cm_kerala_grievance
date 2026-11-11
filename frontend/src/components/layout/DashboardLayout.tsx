@@ -39,14 +39,19 @@ export default function DashboardLayout({ title, subtitle, links, children }: Da
 
   const sidebarContent = (
     <div className="flex flex-col h-full">
-      <div className="p-5 border-b border-green-800/40">
-        {roleLabel && (
-          <div className="text-xs uppercase tracking-wider text-[#e5c060] font-semibold mb-1">
-            {roleLabel}
-          </div>
-        )}
-        <div className="font-bold text-white truncate">{user?.name || 'User'}</div>
-        <div className="text-xs text-green-200 truncate mt-0.5">{user?.email}</div>
+      <div className="p-4 border-b border-green-800/40 flex items-center gap-3">
+        <div className="w-9 h-9 rounded-full bg-[#c9a227]/20 border border-[#c9a227]/50 text-[#f4d068] flex items-center justify-center font-bold text-sm shrink-0">
+          {user?.name?.charAt(0).toUpperCase() || 'U'}
+        </div>
+        <div className="min-w-0 flex-1">
+          {roleLabel && (
+            <div className="text-[11px] uppercase tracking-wider text-[#e5c060] font-semibold truncate leading-tight">
+              {roleLabel}
+            </div>
+          )}
+          <div className="font-bold text-white text-sm truncate leading-tight mt-0.5">{user?.name || 'User'}</div>
+          <div className="text-xs text-green-200/80 truncate mt-0.5">{user?.email}</div>
+        </div>
       </div>
 
       <nav className="flex-1 p-3 space-y-1">

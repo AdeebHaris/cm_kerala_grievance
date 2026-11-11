@@ -79,9 +79,24 @@ export default function Navbar() {
           <div className="hidden md:flex items-center gap-2">
             {user ? (
               <div className="flex items-center gap-2.5">
-                <span className="text-xs font-medium text-emerald-100/90 max-w-[150px] truncate select-none">
-                  {user.name}
-                </span>
+                {/* Distinguished Profile Capsule */}
+                <div className="inline-flex items-center gap-2 py-1 pl-1.5 pr-3 rounded-full bg-emerald-950/40 border border-emerald-400/20 text-white select-none">
+                  <div className="w-6 h-6 rounded-full bg-[#c9a227]/20 border border-[#c9a227]/60 text-[#f4d068] flex items-center justify-center text-xs font-bold shrink-0">
+                    {user.name.charAt(0).toUpperCase()}
+                  </div>
+                  <div className="flex flex-col text-left leading-tight">
+                    <span className="text-xs font-semibold text-white max-w-[130px] truncate">
+                      {user.name}
+                    </span>
+                    <span className="text-[10px] text-emerald-300 font-medium">
+                      {user.role === 'CMO_ADMIN'
+                        ? 'CMO Admin'
+                        : user.role === 'OFFICER'
+                        ? 'Officer'
+                        : 'Citizen'}
+                    </span>
+                  </div>
+                </div>
                 {!hideDashboardActions && (
                   <>
                     <Link
@@ -166,8 +181,20 @@ export default function Navbar() {
           ))}
           {user ? (
             <div className="pt-2 border-t border-white/10 space-y-2 mt-2">
-              <div className="px-3 py-1 text-xs text-emerald-200">
-                Signed in as <strong className="text-white">{user.name}</strong>
+              <div className="flex items-center gap-2.5 px-3 py-2 bg-emerald-950/40 rounded-lg border border-emerald-400/20">
+                <div className="w-7 h-7 rounded-full bg-[#c9a227]/20 border border-[#c9a227]/60 text-[#f4d068] flex items-center justify-center text-xs font-bold shrink-0">
+                  {user.name.charAt(0).toUpperCase()}
+                </div>
+                <div className="flex flex-col text-left leading-tight">
+                  <span className="text-xs font-semibold text-white">{user.name}</span>
+                  <span className="text-[10px] text-emerald-300 font-medium">
+                    {user.role === 'CMO_ADMIN'
+                      ? 'CMO Administrator'
+                      : user.role === 'OFFICER'
+                      ? 'Department Officer'
+                      : 'Verified Citizen'}
+                  </span>
+                </div>
               </div>
               {!hideDashboardActions && (
                 <div className="grid grid-cols-2 gap-2 px-1">
