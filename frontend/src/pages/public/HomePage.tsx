@@ -21,7 +21,6 @@ import {
 } from 'lucide-react';
 import PageLayout from '../../components/layout/PageLayout';
 import api from '../../lib/api';
-import { getUser } from '../../lib/auth';
 import type { PublicStats, Department } from '../../types';
 
 const howItWorksSteps = [
@@ -99,7 +98,6 @@ const fallbackDepartments: Department[] = [
 const deptIcons = [Wrench, HeartPulse, GraduationCap, Droplets, Zap, Sprout];
 
 export default function HomePage() {
-  const user = getUser();
 
   const { data: statsData } = useQuery<PublicStats>({
     queryKey: ['public-stats'],
@@ -130,12 +128,7 @@ export default function HomePage() {
       ? departments.slice(0, 6)
       : fallbackDepartments;
 
-  const submitTarget =
-    user?.role === 'CITIZEN'
-      ? '/citizen/submit'
-      : user
-      ? '/track'
-      : '/register';
+  const submitTarget = '/citizen/submit';
 
   return (
     <PageLayout>

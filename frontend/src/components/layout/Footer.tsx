@@ -30,7 +30,7 @@ export default function Footer() {
                 ['How It Works', '/how-it-works'],
                 ['Departments', '/departments'],
                 ['Track Grievance', '/track'],
-                ['Submit Grievance', '/register'],
+                ['Submit Grievance', '/citizen/submit'],
                 ['FAQ', '/faq'],
               ].map(([label, to]) => (
                 <li key={to}>

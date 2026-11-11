@@ -75,7 +75,7 @@ export default function App() {
           <Route
             path="/citizen/submit"
             element={
-              <ProtectedRoute role="CITIZEN">
+              <ProtectedRoute>
                 <SubmitGrievance />
               </ProtectedRoute>
             }
@@ -83,7 +83,7 @@ export default function App() {
           <Route
             path="/citizen/track"
             element={
-              <ProtectedRoute role="CITIZEN">
+              <ProtectedRoute>
                 <TrackGrievance />
               </ProtectedRoute>
             }

@@ -13,7 +13,7 @@ router = APIRouter(prefix="/api/grievances", tags=["Grievances"])
 @router.post("/", status_code=status.HTTP_201_CREATED, include_in_schema=False)
 async def submit_grievance(
     req: GrievanceCreate,
-    current_user: User = Depends(require_role("CITIZEN")),
+    current_user: User = Depends(require_role("CITIZEN", "CMO_ADMIN", "OFFICER")),
     db: AsyncSession = Depends(get_db),
 ):
     return await grievance_controller.submit_grievance(req, current_user, db)
@@ -21,7 +21,7 @@ async def submit_grievance(
 
 @router.get("/my")
 async def get_my_grievances(
-    current_user: User = Depends(require_role("CITIZEN")),
+    current_user: User = Depends(require_role("CITIZEN", "CMO_ADMIN", "OFFICER")),
     db: AsyncSession = Depends(get_db),
 ):
     return await grievance_controller.get_my_grievances(current_user, db)

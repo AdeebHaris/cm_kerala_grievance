@@ -61,6 +61,12 @@ export default function Navbar() {
           {/* Right side */}
           <div className="hidden md:flex items-center gap-2">
             <Link
+              to="/citizen/submit"
+              className="px-3 py-1.5 text-sm bg-white text-[#1a5c38] rounded hover:bg-gray-100 transition-colors font-semibold"
+            >
+              Submit Grievance
+            </Link>
+            <Link
               to="/track"
               className="px-3 py-1.5 text-sm bg-[#c9a227] text-white rounded hover:bg-[#e5c060] transition-colors font-medium"
             >
@@ -143,6 +149,13 @@ export default function Navbar() {
               {link.label}
             </Link>
           ))}
+          <Link
+            to="/citizen/submit"
+            onClick={() => setMenuOpen(false)}
+            className="block px-3 py-2 text-sm bg-white text-[#1a5c38] rounded font-semibold"
+          >
+            Submit Grievance
+          </Link>
           <Link
             to="/track"
             onClick={() => setMenuOpen(false)}
