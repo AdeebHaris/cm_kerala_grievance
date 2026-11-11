@@ -219,55 +219,84 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Stats Bar */}
+      {/* State-Wide Redressal Metrics Banner */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8 relative z-20">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          {[
-            {
-              label: 'Total Grievances',
-              value: totalGrievances.toLocaleString(),
-              icon: FileText,
-              accent: 'border-[#1a5c38] text-[#1a5c38]',
-            },
-            {
-              label: 'Resolved Cases',
-              value: resolvedGrievances.toLocaleString(),
-              icon: CheckCircle2,
-              accent: 'border-emerald-600 text-emerald-700',
-            },
-            {
-              label: 'Pending / Active',
-              value: pendingGrievances.toLocaleString(),
-              icon: Clock,
-              accent: 'border-[#c9a227] text-[#b38b16]',
-            },
-            {
-              label: 'Departments',
-              value: deptCount.toLocaleString(),
-              icon: Building2,
-              accent: 'border-teal-600 text-teal-700',
-            },
-          ].map((stat) => {
-            const Icon = stat.icon;
-            return (
-              <div
-                key={stat.label}
-                className={`bg-white rounded-xl shadow-md p-5 border-t-4 ${stat.accent} flex items-center justify-between`}
-              >
-                <div>
-                  <div className="text-xs font-medium text-gray-500 uppercase tracking-wide">
-                    {stat.label}
+        <div className="bg-white/95 backdrop-blur-md rounded-2xl shadow-lg border border-slate-200/90 p-4 sm:p-5 space-y-3.5">
+          {/* Header pill clearly clarifying this is State-Wide Data */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2.5 border-b border-slate-100">
+            <div className="flex items-center gap-2">
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+              <span className="text-xs font-bold uppercase tracking-wider text-slate-800">
+                State-Wide Portal Redressal Metrics
+              </span>
+              <span className="text-[11px] text-slate-500 hidden md:inline">
+                • Cumulative public statistics across all 14 Keralam districts
+              </span>
+            </div>
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-slate-100 text-[11px] font-semibold text-slate-600 border border-slate-200 self-start sm:self-auto">
+              <span>Overall Public Tally</span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
+            {[
+              {
+                label: 'Total State Submissions',
+                description: 'Across all 14 districts',
+                value: totalGrievances.toLocaleString(),
+                icon: FileText,
+                accent: 'border-emerald-600 text-[#1a5c38]',
+                iconBg: 'bg-emerald-50 text-[#1a5c38]',
+              },
+              {
+                label: 'State-Wide Resolved',
+                description: 'Successfully redressed',
+                value: resolvedGrievances.toLocaleString(),
+                icon: CheckCircle2,
+                accent: 'border-teal-600 text-teal-700',
+                iconBg: 'bg-teal-50 text-teal-700',
+              },
+              {
+                label: 'Active In Redressal',
+                description: 'Under departmental action',
+                value: pendingGrievances.toLocaleString(),
+                icon: Clock,
+                accent: 'border-amber-500 text-amber-700',
+                iconBg: 'bg-amber-50 text-amber-700',
+              },
+              {
+                label: 'Connected Departments',
+                description: 'State ministries & boards',
+                value: deptCount.toLocaleString(),
+                icon: Building2,
+                accent: 'border-blue-600 text-blue-700',
+                iconBg: 'bg-blue-50 text-blue-700',
+              },
+            ].map((stat) => {
+              const Icon = stat.icon;
+              return (
+                <div
+                  key={stat.label}
+                  className={`bg-slate-50/70 hover:bg-white rounded-xl p-4 border border-slate-200/80 border-t-4 ${stat.accent} transition-all shadow-2xs flex items-center justify-between`}
+                >
+                  <div>
+                    <div className="text-[11px] font-bold text-slate-600 uppercase tracking-wide">
+                      {stat.label}
+                    </div>
+                    <div className="text-2xl sm:text-3xl font-black text-slate-900 mt-1">
+                      {stat.value}
+                    </div>
+                    <div className="text-[10px] text-slate-400 mt-0.5">
+                      {stat.description}
+                    </div>
                   </div>
-                  <div className="text-2xl sm:text-3xl font-extrabold text-gray-900 mt-1">
-                    {stat.value}
+                  <div className={`p-2.5 rounded-xl ${stat.iconBg} shrink-0`}>
+                    <Icon className="w-5 h-5" />
                   </div>
                 </div>
-                <div className="p-3 rounded-lg bg-gray-50">
-                  <Icon className="w-6 h-6" />
-                </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
       </section>
 
