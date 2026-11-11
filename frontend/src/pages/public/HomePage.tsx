@@ -11,6 +11,7 @@ import {
   ShieldCheck,
   ArrowRight,
   Info,
+  Landmark,
 } from 'lucide-react';
 import PageLayout from '../../components/layout/PageLayout';
 import api from '../../lib/api';
@@ -171,9 +172,7 @@ export default function HomePage() {
                   </span>
                   <h2 className="text-lg font-bold text-white">Public Redressal Cell</h2>
                 </div>
-                <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center border border-[#c9a227]/50 text-xl shadow-inner">
-                  🏛️
-                </div>
+                <Landmark className="w-7 h-7 text-[#f4d068] shrink-0" />
               </div>
 
               {/* Stylized Keralam Map Visual & Key Highlights */}

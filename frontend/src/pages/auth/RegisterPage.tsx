@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
-import { UserPlus } from 'lucide-react';
+import { UserPlus, Landmark } from 'lucide-react';
 import toast from 'react-hot-toast';
 import PageLayout from '../../components/layout/PageLayout';
 import api from '../../lib/api';
@@ -62,8 +62,8 @@ export default function RegisterPage() {
       <div className="min-h-[calc(100vh-14rem)] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
         <div className="w-full max-w-md bg-white rounded-2xl shadow-md border border-gray-200 p-8">
           <div className="text-center mb-6">
-            <div className="w-14 h-14 mx-auto rounded-full bg-[#1a5c38] text-[#e5c060] flex items-center justify-center text-2xl mb-3">
-              🏛️
+            <div className="w-12 h-12 mx-auto rounded-xl bg-[#1a5c38] flex items-center justify-center mb-3">
+              <Landmark className="w-6 h-6 text-[#f4d068]" />
             </div>
             <h1 className="text-2xl font-bold text-gray-900">Citizen Registration</h1>
             <p className="text-sm text-gray-500 mt-1">
