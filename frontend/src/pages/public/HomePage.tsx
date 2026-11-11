@@ -9,18 +9,13 @@ import {
   ClipboardCheck,
   UserCheck,
   ShieldCheck,
-  Wrench,
-  HeartPulse,
-  GraduationCap,
-  Droplets,
-  Zap,
-  Sprout,
   ArrowRight,
   Info,
 } from 'lucide-react';
 import PageLayout from '../../components/layout/PageLayout';
 import api from '../../lib/api';
 import type { PublicStats, Department } from '../../types';
+import { getDepartmentIcon } from '../../lib/departmentIcons';
 
 const howItWorksSteps = [
   {
@@ -93,8 +88,6 @@ const fallbackDepartments: Department[] = [
     description: 'Farmer welfare, crop relief, subsidies, and agricultural support.',
   },
 ];
-
-const deptIcons = [Wrench, HeartPulse, GraduationCap, Droplets, Zap, Sprout];
 
 export default function HomePage() {
 
@@ -183,16 +176,25 @@ export default function HomePage() {
                 </div>
               </div>
 
-              {/* Keralam Typography Map Visual & Key Highlights */}
-              <div className="bg-[#0f3d25]/80 rounded-xl p-4 sm:p-5 border border-green-400/20 flex items-center gap-4">
-                <div className="w-28 sm:w-32 bg-white rounded-xl p-2 shrink-0 shadow-md flex flex-col items-center justify-center border border-[#c9a227]/40">
-                  <img
-                    src="/keralam_map.jpeg"
-                    alt="Keralam Map Typography (കേരളം)"
-                    className="w-full h-auto max-h-52 object-contain"
+              {/* Stylized Keralam Map Visual & Key Highlights */}
+              <div className="bg-[#0f3d25]/80 rounded-xl p-5 border border-green-400/20 flex items-center gap-5">
+                <svg
+                  viewBox="0 0 120 260"
+                  className="w-24 h-52 shrink-0 drop-shadow-md"
+                  aria-label="Map of Keralam"
+                >
+                  <path
+                    d="M35,10 C48,8 62,18 68,35 C74,52 66,68 78,86 C90,104 96,120 88,142 C82,158 92,175 84,195 C78,212 85,232 72,248 C62,256 50,245 45,228 C38,208 32,186 28,162 C24,138 18,112 22,86 C26,60 20,30 35,10 Z"
+                    fill="#2d7a52"
+                    stroke="#c9a227"
+                    strokeWidth="3"
                   />
-                  <span className="text-[11px] font-bold text-[#1a5c38] mt-1 tracking-wide">കേരളം (Keralam)</span>
-                </div>
+                  <circle cx="48" cy="36" r="4" fill="#e5c060" />
+                  <circle cx="56" cy="78" r="4" fill="#e5c060" />
+                  <circle cx="62" cy="126" r="5" fill="#ffffff" />
+                  <circle cx="56" cy="176" r="4" fill="#e5c060" />
+                  <circle cx="66" cy="226" r="5" fill="#c9a227" />
+                </svg>
 
                 <div className="space-y-3 text-xs">
                   <div className="bg-white/10 rounded-lg p-2.5 border border-white/10">
@@ -338,8 +340,8 @@ export default function HomePage() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {featuredDepts.map((dept, index) => {
-              const Icon = deptIcons[index % deptIcons.length];
+            {featuredDepts.map((dept) => {
+              const Icon = getDepartmentIcon(dept.code, dept.name);
               return (
                 <div
                   key={dept.id}

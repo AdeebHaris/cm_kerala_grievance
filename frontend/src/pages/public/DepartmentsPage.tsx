@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Building2, Search } from 'lucide-react';
+import { Search } from 'lucide-react';
 import PageLayout from '../../components/layout/PageLayout';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
 import api from '../../lib/api';
 import type { Department } from '../../types';
+import { getDepartmentIcon } from '../../lib/departmentIcons';
 
 export default function DepartmentsPage() {
   const [search, setSearch] = useState('');
@@ -59,25 +60,28 @@ export default function DepartmentsPage() {
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filtered.map((dept) => (
-              <div
-                key={dept.id}
-                className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 hover:shadow-md hover:border-[#1a5c38]/40 transition-all flex flex-col justify-between"
-              >
-                <div>
-                  <div className="flex items-center justify-between gap-3 mb-4">
-                    <div className="w-11 h-11 rounded-lg bg-green-50 text-[#1a5c38] flex items-center justify-center">
-                      <Building2 className="w-6 h-6" />
+            {filtered.map((dept) => {
+              const Icon = getDepartmentIcon(dept.code, dept.name);
+              return (
+                <div
+                  key={dept.id}
+                  className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 hover:shadow-md hover:border-[#1a5c38]/40 transition-all flex flex-col justify-between"
+                >
+                  <div>
+                    <div className="flex items-center justify-between gap-3 mb-4">
+                      <div className="w-11 h-11 rounded-lg bg-green-50 text-[#1a5c38] flex items-center justify-center">
+                        <Icon className="w-6 h-6" />
+                      </div>
+                      <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-[#c9a227]/15 text-[#9a7813]">
+                        {dept.code}
+                      </span>
                     </div>
-                    <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-[#c9a227]/15 text-[#9a7813]">
-                      {dept.code}
-                    </span>
+                    <h2 className="text-lg font-bold text-gray-900">{dept.name}</h2>
+                    <p className="text-sm text-gray-600 mt-2 leading-relaxed">{dept.description}</p>
                   </div>
-                  <h2 className="text-lg font-bold text-gray-900">{dept.name}</h2>
-                  <p className="text-sm text-gray-600 mt-2 leading-relaxed">{dept.description}</p>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>
