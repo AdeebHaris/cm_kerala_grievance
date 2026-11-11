@@ -134,6 +134,7 @@ export default function SubmitGrievance() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [createdGrievance, setCreatedGrievance] = useState<Grievance | null>(null);
   const [copied, setCopied] = useState(false);
+  const [emergencyConfirmed, setEmergencyConfirmed] = useState(false);
 
   const {
     register,
@@ -699,6 +700,18 @@ export default function SubmitGrievance() {
                 );
                 return;
               }
+              // In-between verification gate for High Priority
+              if (
+                data.priority === 'HIGH' &&
+                (!aiResult || aiResult.priority !== 'HIGH') &&
+                !emergencyConfirmed &&
+                !dupEval.isStaleAndUnresolved
+              ) {
+                toast.error(
+                  'High Priority requires emergency verification. Please confirm the declaration under Priority.'
+                );
+                return;
+              }
               submitMutation.mutate(data);
             })}
             className="space-y-4"
@@ -733,11 +746,13 @@ export default function SubmitGrievance() {
                 <select
                   {...register('priority', { required: 'Priority is required' })}
                   value={priorityValue || ''}
-                  onChange={(e) =>
-                    setValue('priority', e.target.value as 'LOW' | 'MEDIUM' | 'HIGH' | '', {
-                      shouldValidate: true,
-                    })
-                  }
+                  onChange={(e) => {
+                    const newPriority = e.target.value as 'LOW' | 'MEDIUM' | 'HIGH' | '';
+                    setValue('priority', newPriority, { shouldValidate: true });
+                    if (newPriority !== 'HIGH') {
+                      setEmergencyConfirmed(false);
+                    }
+                  }}
                   className="w-full px-3.5 py-2.5 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-[#1a5c38] text-sm"
                 >
                   <option value="">Select Priority</option>
@@ -747,6 +762,55 @@ export default function SubmitGrievance() {
                     </option>
                   ))}
                 </select>
+
+                {/* In-between High Priority Verification Gate */}
+                {priorityValue === 'HIGH' && (
+                  <div className="mt-2.5 rounded-lg border border-amber-300 bg-amber-50/80 p-3 text-xs text-amber-950 space-y-2 shadow-2xs">
+                    <div className="flex items-start gap-2">
+                      <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+                      <div>
+                        <span className="font-bold text-amber-950">
+                          High-Priority Verification Gate
+                        </span>
+                        <p className="text-[11px] text-amber-900 mt-0.5 leading-relaxed">
+                          {aiResult
+                            ? aiResult.priority === 'HIGH'
+                              ? 'Verified by AI: This complaint meets emergency criteria (e.g. public safety hazard, critical disruption).'
+                              : `AI assessed this complaint as ${aiResult.priority} priority. High Priority is reserved for active hazards, medical emergencies, or critical civic danger.`
+                            : 'High Priority is reserved for active hazards or emergency danger. Please run "Analyze with AI" above to automatically assess urgency.'}
+                        </p>
+                      </div>
+                    </div>
+
+                    {(!aiResult || aiResult.priority !== 'HIGH') && !dupEval.isStaleAndUnresolved && (
+                      <div className="pt-2 border-t border-amber-200/90 space-y-1.5">
+                        <label className="flex items-start gap-2 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={emergencyConfirmed}
+                            onChange={(e) => setEmergencyConfirmed(e.target.checked)}
+                            className="mt-0.5 rounded border-amber-400 text-[#1a5c38] focus:ring-[#1a5c38]"
+                          />
+                          <span className="text-[11px] font-medium text-amber-950">
+                            I solemnly declare this issue is an urgent emergency requiring immediate High-Priority dispatch (Audited by CMO).
+                          </span>
+                        </label>
+                        {aiResult && aiResult.priority && aiResult.priority !== 'HIGH' && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setValue('priority', aiResult.priority as any, { shouldValidate: true });
+                              setEmergencyConfirmed(false);
+                            }}
+                            className="text-[11px] font-semibold text-[#1a5c38] hover:underline cursor-pointer block"
+                          >
+                            Revert to AI-Assessed Priority ({aiResult.priority})
+                          </button>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
 

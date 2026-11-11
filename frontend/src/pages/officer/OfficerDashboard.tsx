@@ -120,8 +120,12 @@ export default function OfficerDashboard() {
                         <div className="flex items-center gap-1.5">
                           {g.reference_id}
                           {g.is_escalated && (
-                            <span title="Escalated" className="text-red-600">
-                              <AlertTriangle className="w-3.5 h-3.5" />
+                            <span
+                              title="ESC: Escalated to High Priority by Chief Minister's Office"
+                              className="inline-flex items-center gap-1 text-[10px] font-bold text-rose-700 bg-rose-50 px-1.5 py-0.5 rounded border border-rose-200"
+                            >
+                              <AlertTriangle className="w-3 h-3 text-rose-600" />
+                              ESC (Escalated)
                             </span>
                           )}
                         </div>

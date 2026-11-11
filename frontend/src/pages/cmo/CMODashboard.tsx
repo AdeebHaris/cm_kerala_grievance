@@ -189,11 +189,11 @@ export default function CMODashboard() {
                 detail: 'Requires expedited ATR',
               },
               {
-                label: 'High SLA Escalations',
+                label: 'Escalated Cases (ESC)',
                 value: stats?.escalated ?? 0,
                 icon: AlertTriangle,
                 color: 'text-rose-700 bg-rose-50 border-rose-200',
-                detail: 'CMO priority queue',
+                detail: 'ESC = Escalated by CMO priority queue',
               },
             ].map((kpi) => {
               const Icon = kpi.icon;
@@ -225,7 +225,7 @@ export default function CMODashboard() {
           <div>
             <h2 className="text-lg font-bold text-white flex items-center gap-2">
               <TrendingUp className="w-5 h-5 text-[#f4d068]" />
-              <span>Grievance Triage & Assignment Queue</span>
+              <span>Grievance Management & Assignment Queue</span>
             </h2>
             <p className="text-xs sm:text-sm text-emerald-200 mt-1 max-w-2xl">
               Inspect citizen complaints, filter by district or category, reassign departments, and escalate stalled resolutions.

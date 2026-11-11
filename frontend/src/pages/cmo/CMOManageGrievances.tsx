@@ -5,6 +5,7 @@ import {
   Search,
   ArrowUpDown,
   AlertOctagon,
+  AlertTriangle,
   Clock,
   RotateCcw,
   SlidersHorizontal,
@@ -124,7 +125,7 @@ export default function CMOManageGrievances() {
   return (
     <DashboardLayout
       title="Grievance Management"
-      subtitle="Comprehensive triage queue, departmental reassignment, and SLA escalation"
+      subtitle="Comprehensive management queue, departmental reassignment, and SLA escalation"
       links={cmoSidebarLinks}
     >
       <div className="space-y-6">
@@ -365,6 +366,27 @@ export default function CMOManageGrievances() {
                         </td>
                         <td className="py-3.5 px-4 whitespace-nowrap">
                           <PriorityBadge priority={g.priority} />
+                          {g.is_escalated && (
+                            <div className="mt-1">
+                              <span
+                                className="inline-flex items-center gap-1 text-[10px] font-bold text-rose-700 bg-rose-100 px-1.5 py-0.5 rounded border border-rose-200"
+                                title="ESC: Escalated by CMO due to resolution delay"
+                              >
+                                <AlertTriangle className="w-3 h-3 text-rose-600" />
+                                ESC (Escalated)
+                              </span>
+                            </div>
+                          )}
+                          {!g.is_escalated && g.priority === 'HIGH' && g.ai_priority && g.ai_priority !== 'HIGH' && (
+                            <div className="mt-1">
+                              <span
+                                className="inline-flex items-center gap-1 text-[10px] font-medium text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200"
+                                title={`Citizen marked HIGH, AI evaluated as ${g.ai_priority}`}
+                              >
+                                AI: {g.ai_priority}
+                              </span>
+                            </div>
+                          )}
                         </td>
                         <td className="py-3.5 px-4 whitespace-nowrap">
                           <StatusBadge status={g.status} />
@@ -389,7 +411,7 @@ export default function CMOManageGrievances() {
                             onClick={() => navigate(`/cmo/grievances/${g.id}`)}
                             className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold text-[#1a5c38] hover:text-white bg-green-50 hover:bg-[#1a5c38] border border-green-200 hover:border-transparent rounded-lg transition-colors cursor-pointer"
                           >
-                            <span>Triage</span>
+                            <span>Manage</span>
                             <ChevronRight className="w-3.5 h-3.5" />
                           </button>
                         </td>
