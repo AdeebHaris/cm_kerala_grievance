@@ -21,12 +21,10 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo & Brand Identity */}
-          <Link to="/" className="flex items-center gap-3 group select-none py-1">
-            <div className="w-9 h-9 rounded-full bg-white/10 ring-1 ring-white/20 flex items-center justify-center shrink-0 group-hover:bg-white/15 transition-colors">
-              <Landmark className="w-5 h-5 text-[#f4d068]" />
-            </div>
+          <Link to="/" className="flex items-center gap-2.5 select-none py-1">
+            <Landmark className="w-6 h-6 text-[#f4d068] shrink-0" />
             <div className="flex flex-col leading-tight">
-              <span className="font-semibold text-lg tracking-tight text-white group-hover:text-amber-100 transition-colors">
+              <span className="font-semibold text-lg tracking-tight text-white">
                 CM Keralam
               </span>
               <span className="text-[11px] font-normal tracking-wide text-emerald-200/80 -mt-0.5">

@@ -795,20 +795,6 @@ export default function SubmitGrievance() {
               </label>
             </div>
 
-            {dupEval.blockSubmission && (
-              <div className="p-3.5 rounded-xl bg-rose-50 border border-rose-300 text-xs text-rose-800 flex items-start gap-2.5">
-                <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
-                <div className="space-y-1">
-                  <span className="font-bold block">
-                    Submission Disabled — Please verify existing submission date
-                  </span>
-                  <span>
-                    A duplicate grievance was already filed on <strong>{dupEval.formattedDate}</strong>. Submissions are temporarily paused to prevent duplicate administrative queues.
-                  </span>
-                </div>
-              </div>
-            )}
-
             <button
               type="submit"
               disabled={submitMutation.isPending || dupEval.blockSubmission}
