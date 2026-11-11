@@ -171,25 +171,54 @@ export default function RegisterPage() {
       {/* Onboarding Welcome Pop-up for Newly Registered Citizen */}
       {registeredUser && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in duration-200">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 sm:p-7 shadow-2xl space-y-4 text-center border border-gray-100">
-            <div className="w-14 h-14 rounded-2xl bg-emerald-50 text-[#1a5c38] flex items-center justify-center mx-auto border border-emerald-200 shadow-2xs">
+          <div className="bg-white rounded-2xl max-w-md w-full p-6 sm:p-7 shadow-2xl border border-gray-100 text-center space-y-5 relative overflow-hidden">
+            {/* Top decorative accent bar */}
+            <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-[#1a5c38] via-[#c9a227] to-[#1a5c38]" />
+
+            {/* Success icon */}
+            <div className="w-14 h-14 rounded-full bg-emerald-50 text-[#1a5c38] flex items-center justify-center mx-auto ring-8 ring-emerald-50/60 border border-emerald-200">
               <CheckCircle2 className="w-7 h-7 text-[#1a5c38]" />
             </div>
 
+            {/* Header & greeting */}
             <div>
-              <span className="text-[11px] font-bold uppercase tracking-wider text-[#c9a227] bg-[#c9a227]/15 px-2.5 py-0.5 rounded-full">
-                Registration Successful
+              <span className="text-[11px] font-bold uppercase tracking-wider text-[#1a5c38] bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                Account Created Successfully
               </span>
               <h3 className="text-xl font-bold text-gray-900 mt-2">
                 Welcome, {registeredUser.name}!
               </h3>
+              <p className="text-xs text-gray-500 mt-1">
+                Your citizen account is ready to use.
+              </p>
             </div>
 
-            <p className="text-sm text-gray-600 leading-relaxed">
-              Your citizen account has been successfully created. To help you understand how grievance intake, AI triage, CMO verification, and department resolutions operate, please explore our step-by-step workflow guide.
-            </p>
+            {/* Simple visual 3-step explanation */}
+            <div className="bg-slate-50 border border-slate-200/80 rounded-xl p-3.5 text-left space-y-2">
+              <span className="text-[11px] font-bold text-slate-700 uppercase tracking-wide block">
+                How CM Keralam works:
+              </span>
+              <div className="grid grid-cols-3 gap-2 text-center">
+                <div className="p-2 rounded-lg bg-white border border-slate-200/60 shadow-2xs">
+                  <div className="text-base mb-0.5">✍️</div>
+                  <div className="text-xs font-bold text-gray-800">1. Submit</div>
+                  <div className="text-[10px] text-gray-500 leading-tight mt-0.5">AI pre-fills your form</div>
+                </div>
+                <div className="p-2 rounded-lg bg-white border border-slate-200/60 shadow-2xs">
+                  <div className="text-base mb-0.5">🏛️</div>
+                  <div className="text-xs font-bold text-gray-800">2. Review</div>
+                  <div className="text-[10px] text-gray-500 leading-tight mt-0.5">CMO reviews & assigns</div>
+                </div>
+                <div className="p-2 rounded-lg bg-white border border-slate-200/60 shadow-2xs">
+                  <div className="text-base mb-0.5">✅</div>
+                  <div className="text-xs font-bold text-gray-800">3. Resolve</div>
+                  <div className="text-[10px] text-gray-500 leading-tight mt-0.5">Officers fix & report</div>
+                </div>
+              </div>
+            </div>
 
-            <div className="space-y-2.5 pt-2">
+            {/* Action buttons */}
+            <div className="space-y-2 pt-1">
               <button
                 type="button"
                 onClick={() => {
@@ -200,7 +229,7 @@ export default function RegisterPage() {
                 }}
                 className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-[#1a5c38] hover:bg-[#2d7a52] text-white font-semibold text-sm transition-colors shadow-sm cursor-pointer"
               >
-                <span>Explore Portal Workflow (How It Works)</span>
+                <span>See Full How It Works Guide</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
 
@@ -214,7 +243,7 @@ export default function RegisterPage() {
                 }}
                 className="w-full py-2.5 px-4 rounded-xl border border-gray-200 hover:bg-gray-50 text-gray-700 text-xs font-semibold transition-colors cursor-pointer"
               >
-                Skip & Go to Citizen Dashboard
+                Go Directly to My Dashboard
               </button>
             </div>
           </div>
