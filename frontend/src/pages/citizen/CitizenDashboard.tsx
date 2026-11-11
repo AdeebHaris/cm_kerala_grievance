@@ -1,6 +1,7 @@
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { FilePlus2, FileText, Clock, CheckCircle2, Eye, AlertTriangle } from 'lucide-react';
+import { FilePlus2, FileText, Clock, CheckCircle2, Eye, AlertTriangle, ArrowRight, Sparkles } from 'lucide-react';
 import DashboardLayout from '../../components/layout/DashboardLayout';
 import StatusBadge from '../../components/ui/StatusBadge';
 import PriorityBadge from '../../components/ui/PriorityBadge';
@@ -13,6 +14,22 @@ import type { Grievance } from '../../types';
 
 export default function CitizenDashboard() {
   const user = getUser();
+  const [showWorkflowPrompt, setShowWorkflowPrompt] = useState(false);
+
+  useEffect(() => {
+    try {
+      if (localStorage.getItem('cm_kerala_new_user') === 'true') {
+        setShowWorkflowPrompt(true);
+      }
+    } catch {}
+  }, []);
+
+  const handleDismissPrompt = () => {
+    try {
+      localStorage.removeItem('cm_kerala_new_user');
+    } catch {}
+    setShowWorkflowPrompt(false);
+  };
 
   const { data: grievances = [], isLoading, isError } = useQuery<Grievance[]>({
     queryKey: ['citizen-grievances'],
@@ -172,6 +189,49 @@ export default function CitizenDashboard() {
           )}
         </div>
       </div>
+
+      {/* Workflow Guidance Pop-up for Newly Registered Citizen */}
+      {showWorkflowPrompt && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in duration-200">
+          <div className="bg-white rounded-2xl max-w-md w-full p-6 sm:p-7 shadow-2xl space-y-4 text-center border border-gray-100">
+            <div className="w-14 h-14 rounded-2xl bg-emerald-50 text-[#1a5c38] flex items-center justify-center mx-auto border border-emerald-200 shadow-2xs">
+              <Sparkles className="w-7 h-7 text-[#1a5c38]" />
+            </div>
+
+            <div>
+              <span className="text-[11px] font-bold uppercase tracking-wider text-[#c9a227] bg-[#c9a227]/15 px-2.5 py-0.5 rounded-full">
+                Welcome to CM Keralam
+              </span>
+              <h3 className="text-xl font-bold text-gray-900 mt-2">
+                New to the Portal?
+              </h3>
+            </div>
+
+            <p className="text-sm text-gray-600 leading-relaxed">
+              We recommend reviewing the <strong>portal workflow</strong> to understand how grievance intake, AI triage, CMO verification, and department resolutions operate before submitting your first issue.
+            </p>
+
+            <div className="space-y-2.5 pt-2">
+              <Link
+                to="/how-it-works"
+                onClick={handleDismissPrompt}
+                className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-[#1a5c38] hover:bg-[#2d7a52] text-white font-semibold text-sm transition-colors shadow-sm"
+              >
+                <span>Explore Portal Workflow (How It Works)</span>
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+
+              <button
+                type="button"
+                onClick={handleDismissPrompt}
+                className="w-full py-2.5 px-4 rounded-xl border border-gray-200 hover:bg-gray-50 text-gray-700 text-xs font-semibold transition-colors cursor-pointer"
+              >
+                Got it, continue to Dashboard
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </DashboardLayout>
   );
 }

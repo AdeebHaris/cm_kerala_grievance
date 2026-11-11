@@ -1,8 +1,8 @@
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
-import { UserPlus, Landmark } from 'lucide-react';
+import { UserPlus, Landmark, CheckCircle2, ArrowRight } from 'lucide-react';
 import toast from 'react-hot-toast';
 import PageLayout from '../../components/layout/PageLayout';
 import api from '../../lib/api';
@@ -19,12 +19,13 @@ interface RegisterFormValues {
 export default function RegisterPage() {
   const navigate = useNavigate();
   const existingUser = getUser();
+  const [registeredUser, setRegisteredUser] = useState<AuthUser | null>(null);
 
   useEffect(() => {
-    if (existingUser) {
+    if (existingUser && !registeredUser) {
       navigate('/citizen/dashboard', { replace: true });
     }
-  }, [existingUser, navigate]);
+  }, [existingUser, registeredUser, navigate]);
 
   const {
     register,
@@ -45,8 +46,11 @@ export default function RegisterPage() {
     },
     onSuccess: (payload: { token: string; user: AuthUser }) => {
       setAuth(payload.token, payload.user);
+      setRegisteredUser(payload.user);
+      try {
+        localStorage.setItem('cm_kerala_new_user', 'true');
+      } catch {}
       toast.success('Registration successful! Welcome to CM Keralam Portal.');
-      navigate('/citizen/dashboard', { replace: true });
     },
     onError: (err: any) => {
       const msg =
@@ -163,6 +167,59 @@ export default function RegisterPage() {
           </div>
         </div>
       </div>
+
+      {/* Onboarding Welcome Pop-up for Newly Registered Citizen */}
+      {registeredUser && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in duration-200">
+          <div className="bg-white rounded-2xl max-w-md w-full p-6 sm:p-7 shadow-2xl space-y-4 text-center border border-gray-100">
+            <div className="w-14 h-14 rounded-2xl bg-emerald-50 text-[#1a5c38] flex items-center justify-center mx-auto border border-emerald-200 shadow-2xs">
+              <CheckCircle2 className="w-7 h-7 text-[#1a5c38]" />
+            </div>
+
+            <div>
+              <span className="text-[11px] font-bold uppercase tracking-wider text-[#c9a227] bg-[#c9a227]/15 px-2.5 py-0.5 rounded-full">
+                Registration Successful
+              </span>
+              <h3 className="text-xl font-bold text-gray-900 mt-2">
+                Welcome, {registeredUser.name}!
+              </h3>
+            </div>
+
+            <p className="text-sm text-gray-600 leading-relaxed">
+              Your citizen account has been successfully created. To help you understand how grievance intake, AI triage, CMO verification, and department resolutions operate, please explore our step-by-step workflow guide.
+            </p>
+
+            <div className="space-y-2.5 pt-2">
+              <button
+                type="button"
+                onClick={() => {
+                  try {
+                    localStorage.removeItem('cm_kerala_new_user');
+                  } catch {}
+                  navigate('/how-it-works');
+                }}
+                className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-[#1a5c38] hover:bg-[#2d7a52] text-white font-semibold text-sm transition-colors shadow-sm cursor-pointer"
+              >
+                <span>Explore Portal Workflow (How It Works)</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  try {
+                    localStorage.removeItem('cm_kerala_new_user');
+                  } catch {}
+                  navigate('/citizen/dashboard', { replace: true });
+                }}
+                className="w-full py-2.5 px-4 rounded-xl border border-gray-200 hover:bg-gray-50 text-gray-700 text-xs font-semibold transition-colors cursor-pointer"
+              >
+                Skip & Go to Citizen Dashboard
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </PageLayout>
   );
 }
