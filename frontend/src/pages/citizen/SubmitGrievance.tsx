@@ -370,7 +370,7 @@ export default function SubmitGrievance() {
                   </div>
                   <div>
                     <span className="font-bold text-xs uppercase tracking-wider text-gray-800">
-                      AI Triage Recommendation
+                      AI Recommendation
                     </span>
                     <p className="text-[10px] text-gray-400">Values have been auto-filled in the form below</p>
                   </div>
@@ -382,7 +382,7 @@ export default function SubmitGrievance() {
                       : 'bg-emerald-100/70 text-[#0f3d25] border border-emerald-200/80'
                   }`}
                 >
-                  {aiResult.is_fallback ? 'Rule Fallback' : 'Groq AI · Auto-Triage'}
+                  {aiResult.is_fallback ? 'Rule Fallback' : 'Groq AI'}
                 </span>
               </div>
 
@@ -532,11 +532,6 @@ export default function SubmitGrievance() {
                 {districtValue && (
                   <span className="text-xs font-semibold text-[#1a5c38] bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
                     District: {districtValue}
-                  </span>
-                )}
-                {aiResult && (
-                  <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
-                    ✓ Pre-filled by AI
                   </span>
                 )}
               </div>

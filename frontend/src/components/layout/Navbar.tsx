@@ -72,48 +72,76 @@ export default function Navbar() {
             )}
           </div>
 
-          {/* Mobile hamburger */}
+          {/* Mobile hamburger with smooth icon rotation transition */}
           <button
-            className="md:hidden p-2"
+            className="md:hidden p-2 rounded-lg text-white hover:bg-[#2d7a52] transition-colors focus:outline-none relative w-10 h-10 flex items-center justify-center cursor-pointer"
             onClick={() => setMenuOpen(!menuOpen)}
+            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
           >
-            {menuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            <Menu
+              className={`w-6 h-6 absolute transition-all duration-300 ease-in-out ${
+                menuOpen ? 'opacity-0 rotate-90 scale-75 pointer-events-none' : 'opacity-100 rotate-0 scale-100'
+              }`}
+            />
+            <X
+              className={`w-6 h-6 absolute transition-all duration-300 ease-in-out ${
+                menuOpen ? 'opacity-100 rotate-0 scale-100' : 'opacity-0 -rotate-90 scale-75 pointer-events-none'
+              }`}
+            />
           </button>
         </div>
       </div>
 
-      {/* Mobile menu */}
-      {menuOpen && (
-        <div className="md:hidden bg-[#0f3d25] px-4 pb-4 space-y-1">
+      {/* Mobile menu with smooth slide & fade animation */}
+      <div
+        className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${
+          menuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0 pointer-events-none'
+        }`}
+      >
+        <div className="bg-[#0f3d25] px-4 pt-2 pb-4 space-y-1 border-t border-[#1a5c38]/50 shadow-inner">
           {navLinks.map((link) => (
             <Link
               key={link.to}
               to={link.to}
               onClick={() => setMenuOpen(false)}
-              className="block px-3 py-2 text-sm rounded hover:bg-[#2d7a52]"
+              className="block px-3 py-2 text-sm rounded-lg hover:bg-[#2d7a52] transition-colors"
             >
               {link.label}
             </Link>
           ))}
           {user ? (
-            <span className="block px-3 py-2 text-sm text-[#e5c060] font-medium">
+            <span className="block px-3 py-2 text-sm text-[#e5c060] font-semibold border-t border-white/10 mt-2 pt-2">
               {user.name}
             </span>
           ) : (
-            <>
+            <div className="pt-2 border-t border-white/10 space-y-1.5">
               <Link
                 to="/track"
                 onClick={() => setMenuOpen(false)}
-                className="block px-3 py-2 text-sm bg-[#c9a227] rounded font-medium text-white"
+                className="block px-3 py-2 text-sm bg-[#c9a227] hover:bg-[#e5c060] rounded-lg font-medium text-white transition-colors"
               >
                 Track Grievance
               </Link>
-              <Link to="/login" onClick={() => setMenuOpen(false)} className="block px-3 py-2 text-sm hover:bg-[#2d7a52] rounded">Login</Link>
-              <Link to="/register" onClick={() => setMenuOpen(false)} className="block px-3 py-2 text-sm bg-white text-[#1a5c38] rounded font-medium">Register</Link>
-            </>
+              <div className="grid grid-cols-2 gap-2 pt-1">
+                <Link
+                  to="/login"
+                  onClick={() => setMenuOpen(false)}
+                  className="block text-center px-3 py-2 text-sm border border-white/40 hover:bg-white/10 rounded-lg transition-colors"
+                >
+                  Login
+                </Link>
+                <Link
+                  to="/register"
+                  onClick={() => setMenuOpen(false)}
+                  className="block text-center px-3 py-2 text-sm bg-white text-[#1a5c38] hover:bg-gray-100 rounded-lg font-medium transition-colors"
+                >
+                  Register
+                </Link>
+              </div>
+            </div>
           )}
         </div>
-      )}
+      </div>
     </nav>
   );
 }
