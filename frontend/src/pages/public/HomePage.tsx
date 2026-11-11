@@ -138,7 +138,7 @@ export default function HomePage() {
           <div className="lg:col-span-7 space-y-6 z-10">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 border border-[#c9a227]/40 text-[#e5c060] text-xs font-semibold tracking-wide uppercase">
               <ShieldCheck className="w-4 h-4" />
-              Kerala Citizen Redressal System • Prototype
+              Government of Kerala • Citizen Redressal System
             </div>
 
             <h1 className="text-3xl sm:text-5xl font-extrabold leading-tight">
@@ -368,7 +368,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Testimonials & Recruitment Prototype Notice */}
+      {/* Citizen Feedback & Support */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 space-y-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <blockquote className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
@@ -393,17 +393,17 @@ export default function HomePage() {
           <div className="flex items-start gap-3">
             <Info className="w-6 h-6 text-[#c9a227] shrink-0 mt-0.5" />
             <div>
-              <h3 className="font-bold text-[#e5c060]">Recruitment Prototype Disclaimer</h3>
+              <h3 className="font-bold text-[#e5c060]">Need Assistance with Your Grievance?</h3>
               <p className="text-sm text-green-100 mt-1">
-                Recruitment Prototype for WhiteMatrix Software Solutions — Not affiliated with or endorsed by the Government of Kerala or the Chief Minister's Office.
+                You can track ongoing redressal status anytime using your Reference ID or reach out to our dedicated support desk.
               </p>
             </div>
           </div>
           <Link
-            to="/login"
+            to="/track"
             className="shrink-0 px-4 py-2 rounded-lg bg-[#c9a227] hover:bg-[#e5c060] text-[#0f3d25] font-semibold text-sm transition-colors"
           >
-            Try Demo Login
+            Track Grievance
           </Link>
         </div>
       </section>

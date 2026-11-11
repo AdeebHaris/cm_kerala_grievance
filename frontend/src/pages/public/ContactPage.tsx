@@ -53,9 +53,9 @@ export default function ContactPage() {
         {/* Info Column */}
         <div className="lg:col-span-5 space-y-6">
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 space-y-5">
-            <h2 className="text-xl font-bold text-gray-900">Portal Support Desk (Prototype)</h2>
+            <h2 className="text-xl font-bold text-gray-900">Portal Support Desk</h2>
             <p className="text-sm text-gray-600 leading-relaxed">
-              For general enquiries regarding portal accessibility, department coordination, or prototype feedback, contact us using the details below or submit the enquiry form.
+              For general enquiries regarding portal accessibility, department coordination, or public grievances, contact us using the details below or submit the enquiry form.
             </p>
 
             <div className="space-y-4 pt-2">
@@ -64,9 +64,9 @@ export default function ContactPage() {
                   <MapPin className="w-5 h-5" />
                 </div>
                 <div>
-                  <div className="text-sm font-semibold text-gray-900">Demo Address</div>
+                  <div className="text-sm font-semibold text-gray-900">Secretariat Office</div>
                   <div className="text-sm text-gray-600">
-                    Demo Secretariat Wing, Thiruvananthapuram, Kerala (Recruitment Prototype)
+                    Chief Minister's Office, Government Secretariat, Thiruvananthapuram, Kerala - 695001
                   </div>
                 </div>
               </div>
@@ -76,8 +76,8 @@ export default function ContactPage() {
                   <Phone className="w-5 h-5" />
                 </div>
                 <div>
-                  <div className="text-sm font-semibold text-gray-900">Demo Helpline</div>
-                  <div className="text-sm text-gray-600">+91-000-000-0000 (Mon–Sat, 9:30 AM – 5:30 PM)</div>
+                  <div className="text-sm font-semibold text-gray-900">Helpline</div>
+                  <div className="text-sm text-gray-600">0471-2333812 / 2333717 (Mon–Sat, 9:30 AM – 5:30 PM)</div>
                 </div>
               </div>
 
@@ -87,7 +87,7 @@ export default function ContactPage() {
                 </div>
                 <div>
                   <div className="text-sm font-semibold text-gray-900">Email</div>
-                  <div className="text-sm text-gray-600">prototype-support@whitematrix-demo.example</div>
+                  <div className="text-sm text-gray-600">grievance.cmo@kerala.gov.in</div>
                 </div>
               </div>
             </div>
