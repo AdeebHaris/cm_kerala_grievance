@@ -15,12 +15,14 @@ import {
   FileText,
   Trash2,
   Clock,
+  Lock,
+  Bot,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import DashboardLayout from '../../components/layout/DashboardLayout';
 import PriorityBadge from '../../components/ui/PriorityBadge';
 import api from '../../lib/api';
-import { KERALA_DISTRICTS, GRIEVANCE_CATEGORIES, GRIEVANCE_PRIORITIES } from '../../lib/constants';
+import { KERALA_DISTRICTS, GRIEVANCE_CATEGORIES } from '../../lib/constants';
 import { citizenSidebarLinks } from '../../lib/sidebarLinks';
 import type { AIAnalysisResult, DuplicateCandidate, Grievance } from '../../types';
 
@@ -134,7 +136,6 @@ export default function SubmitGrievance() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [createdGrievance, setCreatedGrievance] = useState<Grievance | null>(null);
   const [copied, setCopied] = useState(false);
-  const [emergencyConfirmed, setEmergencyConfirmed] = useState(false);
 
   const {
     register,
@@ -700,19 +701,16 @@ export default function SubmitGrievance() {
                 );
                 return;
               }
-              // In-between verification gate for High Priority
-              if (
-                data.priority === 'HIGH' &&
-                (!aiResult || aiResult.priority !== 'HIGH') &&
-                !emergencyConfirmed &&
-                !dupEval.isStaleAndUnresolved
-              ) {
+              if (!priorityValue) {
                 toast.error(
-                  'High Priority requires emergency verification. Please confirm the declaration under Priority.'
+                  'Please click "Analyze with AI" above to automatically assess and set the grievance priority.'
                 );
                 return;
               }
-              submitMutation.mutate(data);
+              submitMutation.mutate({
+                ...data,
+                priority: priorityValue,
+              });
             })}
             className="space-y-4"
           >
@@ -740,76 +738,70 @@ export default function SubmitGrievance() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Priority *
-                </label>
-                <select
-                  {...register('priority', { required: 'Priority is required' })}
+                <div className="flex items-center justify-between mb-1">
+                  <label className="block text-sm font-medium text-gray-700">
+                    Priority (AI Evaluated) *
+                  </label>
+                  <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-gray-500 bg-gray-100 px-2 py-0.5 rounded">
+                    <Lock className="w-3 h-3 text-gray-400" />
+                    Locked by AI
+                  </span>
+                </div>
+
+                {/* Locked Priority Field (Set solely by AI) */}
+                <input
+                  type="hidden"
+                  {...register('priority', {
+                    required: 'Priority must be evaluated by the AI assistant before submission',
+                  })}
                   value={priorityValue || ''}
-                  onChange={(e) => {
-                    const newPriority = e.target.value as 'LOW' | 'MEDIUM' | 'HIGH' | '';
-                    setValue('priority', newPriority, { shouldValidate: true });
-                    if (newPriority !== 'HIGH') {
-                      setEmergencyConfirmed(false);
+                />
+                <div className="relative">
+                  <input
+                    type="text"
+                    readOnly
+                    disabled
+                    value={
+                      priorityValue
+                        ? `${priorityValue} Priority`
+                        : 'Awaiting AI Analysis...'
                     }
-                  }}
-                  className="w-full px-3.5 py-2.5 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-[#1a5c38] text-sm"
-                >
-                  <option value="">Select Priority</option>
-                  {GRIEVANCE_PRIORITIES.map((p) => (
-                    <option key={p} value={p}>
-                      {p}
-                    </option>
-                  ))}
-                </select>
-
-                {/* In-between High Priority Verification Gate */}
-                {priorityValue === 'HIGH' && (
-                  <div className="mt-2.5 rounded-lg border border-amber-300 bg-amber-50/80 p-3 text-xs text-amber-950 space-y-2 shadow-2xs">
-                    <div className="flex items-start gap-2">
-                      <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
-                      <div>
-                        <span className="font-bold text-amber-950">
-                          High-Priority Verification Gate
-                        </span>
-                        <p className="text-[11px] text-amber-900 mt-0.5 leading-relaxed">
-                          {aiResult
-                            ? aiResult.priority === 'HIGH'
-                              ? 'Verified by AI: This complaint meets emergency criteria (e.g. public safety hazard, critical disruption).'
-                              : `AI assessed this complaint as ${aiResult.priority} priority. High Priority is reserved for active hazards, medical emergencies, or critical civic danger.`
-                            : 'High Priority is reserved for active hazards or emergency danger. Please run "Analyze with AI" above to automatically assess urgency.'}
-                        </p>
-                      </div>
+                    placeholder="Pending AI Assessment..."
+                    className="w-full px-3.5 py-2.5 border border-gray-200 rounded-lg bg-gray-50 text-gray-800 text-sm font-bold cursor-not-allowed select-none pl-9"
+                  />
+                  <Lock className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                  {priorityValue && (
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                      <PriorityBadge priority={priorityValue} />
                     </div>
+                  )}
+                </div>
 
-                    {(!aiResult || aiResult.priority !== 'HIGH') && !dupEval.isStaleAndUnresolved && (
-                      <div className="pt-2 border-t border-amber-200/90 space-y-1.5">
-                        <label className="flex items-start gap-2 cursor-pointer">
-                          <input
-                            type="checkbox"
-                            checked={emergencyConfirmed}
-                            onChange={(e) => setEmergencyConfirmed(e.target.checked)}
-                            className="mt-0.5 rounded border-amber-400 text-[#1a5c38] focus:ring-[#1a5c38]"
-                          />
-                          <span className="text-[11px] font-medium text-amber-950">
-                            I solemnly declare this issue is an urgent emergency requiring immediate High-Priority dispatch (Audited by CMO).
-                          </span>
-                        </label>
-                        {aiResult && aiResult.priority && aiResult.priority !== 'HIGH' && (
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setValue('priority', aiResult.priority as any, { shouldValidate: true });
-                              setEmergencyConfirmed(false);
-                            }}
-                            className="text-[11px] font-semibold text-[#1a5c38] hover:underline cursor-pointer block"
-                          >
-                            Revert to AI-Assessed Priority ({aiResult.priority})
-                          </button>
+                {/* Clear Explanatory Notice Near the Field */}
+                <div className="mt-2 rounded-lg border border-emerald-200/90 bg-emerald-50/70 p-2.5 text-xs text-emerald-950 space-y-1 shadow-2xs">
+                  <div className="flex items-start gap-2">
+                    <Bot className="w-4 h-4 text-[#1a5c38] shrink-0 mt-0.5" />
+                    <div>
+                      <span className="font-bold text-[#1a5c38]">
+                        Priority is set only by AI:
+                      </span>
+                      <p className="text-[11px] text-emerald-900 mt-0.5 leading-relaxed">
+                        {priorityValue ? (
+                          <>
+                            Objectively evaluated as <strong className="font-bold">{priorityValue}</strong> by the AI Assistant based on public safety impact and urgency. Manual alteration is disabled to prevent priority abuse and guarantee fair triage.
+                          </>
+                        ) : (
+                          <>
+                            Manual priority selection is disabled. Please click <strong className="text-[#1a5c38] font-bold">&quot;Analyze with AI&quot;</strong> in Step 1 to automatically evaluate and set the priority.
+                          </>
                         )}
-                      </div>
-                    )}
+                      </p>
+                    </div>
                   </div>
+                </div>
+
+                {errors.priority && (
+                  <p className="text-xs text-red-600 mt-1 font-medium">{errors.priority.message}</p>
                 )}
               </div>
             </div>

@@ -247,11 +247,19 @@ export default function CMOManageGrievances() {
           </div>
         </div>
 
-        {/* Results Header */}
-        <div className="flex items-center justify-between text-xs text-gray-500 px-1">
-          <div>
-            Showing <strong className="text-gray-900">{displayedGrievances.length}</strong> of{' '}
-            <strong className="text-gray-900">{listPayload?.total ?? 0}</strong> complaints
+        {/* Results Header with Badge Legend */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-gray-500 px-1">
+          <div className="flex items-center gap-3">
+            <span>
+              Showing <strong className="text-gray-900">{displayedGrievances.length}</strong> of{' '}
+              <strong className="text-gray-900">{listPayload?.total ?? 0}</strong> complaints
+            </span>
+            <div className="hidden md:flex items-center gap-2 pl-3 border-l border-gray-200">
+              <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-rose-700 bg-rose-50 px-2 py-0.5 rounded-full border border-rose-200">
+                <AlertTriangle className="w-3 h-3 text-rose-600" />
+                Escalated = Flagged for Urgent CMO Action
+              </span>
+            </div>
           </div>
           <div className="flex items-center gap-2">
             <span>Sort:</span>
@@ -369,11 +377,11 @@ export default function CMOManageGrievances() {
                           {g.is_escalated && (
                             <div className="mt-1">
                               <span
-                                className="inline-flex items-center gap-1 text-[10px] font-bold text-rose-700 bg-rose-100 px-1.5 py-0.5 rounded border border-rose-200"
-                                title="ESC: Escalated by CMO due to resolution delay"
+                                className="inline-flex items-center gap-1 text-[10px] font-bold text-rose-700 bg-rose-50 px-2 py-0.5 rounded-full border border-rose-200"
+                                title="Escalated by CMO due to resolution delay"
                               >
                                 <AlertTriangle className="w-3 h-3 text-rose-600" />
-                                ESC (Escalated)
+                                Escalated
                               </span>
                             </div>
                           )}

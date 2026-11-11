@@ -189,11 +189,11 @@ export default function CMODashboard() {
                 detail: 'Requires expedited ATR',
               },
               {
-                label: 'Escalated Cases (ESC)',
+                label: 'Escalated Cases',
                 value: stats?.escalated ?? 0,
                 icon: AlertTriangle,
                 color: 'text-rose-700 bg-rose-50 border-rose-200',
-                detail: 'ESC = Escalated by CMO priority queue',
+                detail: 'Flagged by CMO for urgent action',
               },
             ].map((kpi) => {
               const Icon = kpi.icon;
