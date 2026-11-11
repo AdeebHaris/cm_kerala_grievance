@@ -38,7 +38,7 @@ const howItWorksSteps = [
   {
     step: '03',
     title: 'Department Assigned',
-    desc: 'Forwarded directly to the concerned Kerala state department.',
+    desc: 'Forwarded directly to the concerned state department.',
     icon: Building2,
   },
   {
@@ -137,16 +137,16 @@ export default function HomePage() {
           <div className="lg:col-span-7 space-y-6 z-10">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 border border-[#c9a227]/40 text-[#e5c060] text-xs font-semibold tracking-wide uppercase">
               <ShieldCheck className="w-4 h-4" />
-              Government of Kerala • Citizen Redressal System
+              Government of Keralam • Citizen Redressal System
             </div>
 
             <h1 className="text-3xl sm:text-5xl font-extrabold leading-tight">
-              CM Kerala{' '}
+              CM Keralam{' '}
               <span className="text-[#c9a227]">Grievance Portal</span>
             </h1>
 
             <p className="text-lg sm:text-xl text-green-100 max-w-2xl leading-relaxed">
-              Your voice matters to the Chief Minister. Submit public grievances seamlessly with AI-powered routing, track real-time progress across all 14 districts, and receive transparent resolutions.
+              Your voice matters to the Chief Minister. Submit public grievances seamlessly with AI-powered routing, track real-time progress across all 14 districts of Keralam, and receive transparent resolutions.
             </p>
 
             <div className="flex flex-wrap gap-4 pt-2">
@@ -168,7 +168,7 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* Kerala State Grid Visual Card */}
+          {/* Keralam State Grid Visual Card */}
           <div className="lg:col-span-5 flex justify-center z-10">
             <div className="relative w-full max-w-sm bg-white/10 backdrop-blur-sm border border-[#c9a227]/40 rounded-2xl p-6 shadow-2xl">
               <div className="flex items-center justify-between mb-4 pb-3 border-b border-white/15">
@@ -183,25 +183,16 @@ export default function HomePage() {
                 </div>
               </div>
 
-              {/* Stylized Kerala Map Visual & Key Highlights */}
-              <div className="bg-[#0f3d25]/80 rounded-xl p-5 border border-green-400/20 flex items-center gap-5">
-                <svg
-                  viewBox="0 0 120 260"
-                  className="w-24 h-52 shrink-0 drop-shadow-md"
-                  aria-label="Map of Kerala"
-                >
-                  <path
-                    d="M35,10 C48,8 62,18 68,35 C74,52 66,68 78,86 C90,104 96,120 88,142 C82,158 92,175 84,195 C78,212 85,232 72,248 C62,256 50,245 45,228 C38,208 32,186 28,162 C24,138 18,112 22,86 C26,60 20,30 35,10 Z"
-                    fill="#2d7a52"
-                    stroke="#c9a227"
-                    strokeWidth="3"
+              {/* Keralam Typography Map Visual & Key Highlights */}
+              <div className="bg-[#0f3d25]/80 rounded-xl p-4 sm:p-5 border border-green-400/20 flex items-center gap-4">
+                <div className="w-28 sm:w-32 bg-white rounded-xl p-2 shrink-0 shadow-md flex flex-col items-center justify-center border border-[#c9a227]/40">
+                  <img
+                    src="/keralam_map.jpeg"
+                    alt="Keralam Map Typography (കേരളം)"
+                    className="w-full h-auto max-h-52 object-contain"
                   />
-                  <circle cx="48" cy="36" r="4" fill="#e5c060" />
-                  <circle cx="56" cy="78" r="4" fill="#e5c060" />
-                  <circle cx="62" cy="126" r="5" fill="#ffffff" />
-                  <circle cx="56" cy="176" r="4" fill="#e5c060" />
-                  <circle cx="66" cy="226" r="5" fill="#c9a227" />
-                </svg>
+                  <span className="text-[11px] font-bold text-[#1a5c38] mt-1 tracking-wide">കേരളം (Keralam)</span>
+                </div>
 
                 <div className="space-y-3 text-xs">
                   <div className="bg-white/10 rounded-lg p-2.5 border border-white/10">

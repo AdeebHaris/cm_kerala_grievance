@@ -44,7 +44,7 @@ export default function ContactPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h1 className="text-3xl sm:text-4xl font-bold">Contact Us</h1>
           <p className="mt-3 text-green-100 max-w-2xl">
-            Have questions about the grievance portal or need technical assistance? Reach out to the CM Kerala Portal Support Desk.
+            Have questions about the grievance portal or need technical assistance? Reach out to the CM Keralam Portal Support Desk.
           </p>
         </div>
       </div>
@@ -105,7 +105,7 @@ export default function ContactPage() {
                 <div>
                   <div className="font-semibold text-sm">Message sent successfully!</div>
                   <p className="text-xs mt-1">
-                    Thank you for contacting the CM Kerala Grievance Portal. Our team will review your message shortly.
+                    Thank you for contacting the CM Keralam Grievance Portal. Our team will review your message shortly.
                   </p>
                 </div>
               </div>

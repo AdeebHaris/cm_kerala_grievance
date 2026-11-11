@@ -40,7 +40,7 @@ export default function Navbar() {
           <Link to="/" className="flex items-center gap-3">
             <span className="text-2xl">🏛️</span>
             <div className="leading-tight">
-              <div className="font-bold text-sm sm:text-base text-[#c9a227]">CM Kerala</div>
+              <div className="font-bold text-sm sm:text-base text-[#c9a227]">CM Keralam</div>
               <div className="text-xs text-green-200 hidden sm:block">Grievance Portal</div>
             </div>
           </Link>

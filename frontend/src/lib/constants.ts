@@ -1,4 +1,4 @@
-export const KERALA_DISTRICTS = [
+export const KERALAM_DISTRICTS = [
   'Thiruvananthapuram',
   'Kollam',
   'Pathanamthitta',
@@ -14,6 +14,8 @@ export const KERALA_DISTRICTS = [
   'Kannur',
   'Kasaragod',
 ] as const;
+
+export const KERALA_DISTRICTS = KERALAM_DISTRICTS;
 
 export const GRIEVANCE_CATEGORIES = [
   'Roads & Infrastructure',

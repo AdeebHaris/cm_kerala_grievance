@@ -28,7 +28,7 @@ export default function DepartmentsPage() {
     <PageLayout>
       <div className="bg-[#1a5c38] text-white py-14">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-3xl sm:text-4xl font-bold">Kerala State Departments</h1>
+          <h1 className="text-3xl sm:text-4xl font-bold">Government Departments of Keralam</h1>
           <p className="mt-3 text-green-100 max-w-2xl">
             Browse participating government departments responsible for investigating and resolving citizen grievances.
           </p>

@@ -167,7 +167,7 @@ export default function SubmitGrievance() {
                   {...register('district', { required: 'Please select a district' })}
                   className="w-full px-3.5 py-2.5 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-[#1a5c38]"
                 >
-                  <option value="">Select Kerala District</option>
+                  <option value="">Select Keralam District</option>
                   {KERALA_DISTRICTS.map((d) => (
                     <option key={d} value={d}>
                       {d}

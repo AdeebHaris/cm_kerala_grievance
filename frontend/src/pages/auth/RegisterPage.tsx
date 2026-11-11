@@ -45,7 +45,7 @@ export default function RegisterPage() {
     },
     onSuccess: (payload: { token: string; user: AuthUser }) => {
       setAuth(payload.token, payload.user);
-      toast.success('Registration successful! Welcome to CM Kerala Portal.');
+      toast.success('Registration successful! Welcome to CM Keralam Portal.');
       navigate('/citizen/dashboard', { replace: true });
     },
     onError: (err: any) => {

@@ -11,12 +11,12 @@ export default function Footer() {
             <div className="flex items-center gap-3 mb-4">
               <span className="text-3xl">🏛️</span>
               <div>
-                <div className="font-bold text-[#c9a227] text-lg">CM Kerala</div>
+                <div className="font-bold text-[#c9a227] text-lg">CM Keralam</div>
                 <div className="text-green-200 text-sm">Grievance Redressal Portal</div>
               </div>
             </div>
             <p className="text-green-200 text-sm leading-relaxed">
-              A demonstration digital platform enabling citizens to submit and track civic grievances across Kerala districts with AI-assisted triage.
+              A demonstration digital platform enabling citizens to submit and track civic grievances across Keralam districts with AI-assisted triage.
             </p>
           </div>
 
@@ -48,7 +48,7 @@ export default function Footer() {
             <ul className="space-y-3 text-green-200 text-sm">
               <li className="flex items-start gap-2">
                 <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0" />
-                <span>Chief Minister's Office, Government Secretariat, Thiruvananthapuram, Kerala - 695001</span>
+                <span>Chief Minister's Office, Government Secretariat, Thiruvananthapuram, Keralam - 695001</span>
               </li>
               <li className="flex items-center gap-2">
                 <Phone className="w-4 h-4" />
@@ -56,14 +56,14 @@ export default function Footer() {
               </li>
               <li className="flex items-center gap-2">
                 <Mail className="w-4 h-4" />
-                <span>grievance.cmo@kerala.gov.in</span>
+                <span>grievance.cmo@keralam.gov.in</span>
               </li>
             </ul>
           </div>
         </div>
 
         <div className="mt-10 pt-6 border-t border-green-700 text-center text-green-200 text-xs">
-          <div>© 2026 Chief Minister's Public Grievance Redressal Portal, Government of Kerala.</div>
+          <div>© 2026 Chief Minister's Public Grievance Redressal Portal, Government of Keralam.</div>
         </div>
       </div>
     </footer>

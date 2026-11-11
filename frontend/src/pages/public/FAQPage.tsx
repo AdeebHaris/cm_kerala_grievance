@@ -4,8 +4,8 @@ import PageLayout from '../../components/layout/PageLayout';
 
 const faqs = [
   {
-    q: 'Who can submit a grievance on the CM Kerala Grievance Portal?',
-    a: 'Any resident or citizen of Kerala across all 14 districts can register for free and submit a public or civic grievance to the Chief Minister’s Office.',
+    q: 'Who can submit a grievance on the CM Keralam Grievance Portal?',
+    a: 'Any resident or citizen of Keralam across all 14 districts can register for free and submit a public or civic grievance to the Chief Minister’s Office.',
   },
   {
     q: 'How do I submit a grievance?',
@@ -17,7 +17,7 @@ const faqs = [
   },
   {
     q: 'How does the AI Grievance Assistant work?',
-    a: 'When you describe your complaint and click "Analyze with AI", our AI analyzes the text and suggests the most appropriate Kerala department, category, priority level, and summary. You can review and accept or override these suggestions before submitting.',
+    a: 'When you describe your complaint and click "Analyze with AI", our AI analyzes the text and suggests the most appropriate state department, category, priority level, and summary. You can review and accept or override these suggestions before submitting.',
   },
   {
     q: 'What do the different grievance statuses mean?',
@@ -50,7 +50,7 @@ export default function FAQPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h1 className="text-3xl sm:text-4xl font-bold">Frequently Asked Questions</h1>
           <p className="mt-3 text-green-100 max-w-2xl">
-            Find quick answers about submitting, tracking, and resolving grievances on the CM Kerala Portal.
+            Find quick answers about submitting, tracking, and resolving grievances on the CM Keralam Portal.
           </p>
         </div>
       </div>

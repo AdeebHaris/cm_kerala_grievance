@@ -8,7 +8,7 @@ export default function AboutPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h1 className="text-3xl sm:text-4xl font-bold">About the Portal</h1>
           <p className="mt-3 text-green-100 max-w-2xl">
-            Bridging citizens of Kerala and the Chief Minister’s Office with accountability, speed, and transparency.
+            Bridging citizens of Keralam and the Chief Minister’s Office with accountability, speed, and transparency.
           </p>
         </div>
       </div>
@@ -18,7 +18,7 @@ export default function AboutPage() {
         <section className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 sm:p-8">
           <h2 className="text-2xl font-bold text-[#1a5c38] mb-3">Purpose of the Portal</h2>
           <p className="text-gray-700 leading-relaxed">
-            The CM Kerala Chief Minister’s Public Grievance Redressal Portal provides a single-window digital channel for every resident across Kerala’s 14 districts to submit complaints, petitions, and civic issues directly to the Chief Minister’s Office (CMO). Each submission is assigned a unique reference ID, analyzed by AI for rapid routing, reviewed by CMO administrators, and acted upon by designated state departments.
+            The CM Keralam Chief Minister’s Public Grievance Redressal Portal provides a single-window digital channel for every resident across Keralam’s 14 districts to submit complaints, petitions, and civic issues directly to the Chief Minister’s Office (CMO). Each submission is assigned a unique reference ID, analyzed by AI for rapid routing, reviewed by CMO administrators, and acted upon by designated state departments.
           </p>
         </section>
 
@@ -40,7 +40,7 @@ export default function AboutPage() {
             </div>
             <h2 className="text-xl font-bold text-gray-900 mb-2">Our Vision</h2>
             <p className="text-gray-600 leading-relaxed">
-              A responsive and transparent governance ecosystem in Kerala where every citizen’s concern is heard, documented, and resolved with measurable accountability.
+              A responsive and transparent governance ecosystem in Keralam where every citizen’s concern is heard, documented, and resolved with measurable accountability.
             </p>
           </div>
         </div>
@@ -50,7 +50,7 @@ export default function AboutPage() {
           <h2 className="text-2xl font-bold text-gray-900 mb-5">Core Objectives</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {[
-              'Provide 24/7 online access for citizens across all 14 districts of Kerala.',
+              'Provide 24/7 online access for citizens across all 14 districts of Keralam.',
               'Standardize grievance tracking with instant Reference ID generation.',
               'Use AI-assisted triage to identify the right department and urgency level.',
               'Enable CMO administrators to monitor overdue and high-priority cases.',

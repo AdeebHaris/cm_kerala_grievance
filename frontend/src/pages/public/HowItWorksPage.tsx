@@ -14,7 +14,7 @@ const stages = [
   {
     number: 1,
     title: 'Register & Describe Your Grievance',
-    desc: 'Create a citizen account with your contact details. Describe your issue clearly, select your Kerala district, and attach any supporting photos or PDF documents.',
+    desc: 'Create a citizen account with your contact details. Describe your issue clearly, select your Keralam district, and attach any supporting photos or PDF documents.',
     icon: UserPlus,
   },
   {
@@ -32,7 +32,7 @@ const stages = [
   {
     number: 4,
     title: 'Department Assignment',
-    desc: 'CMO administrators assign the grievance to one of Kerala’s 10 state departments (such as Public Works, Health Services, Water Resources, or Electricity Board).',
+    desc: 'CMO administrators assign the grievance to one of Keralam’s 10 state departments (such as Public Works, Health Services, Water Resources, or Electricity Board).',
     icon: Building2,
   },
   {
