@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, X, Landmark, LayoutDashboard, LogOut } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { clearAuth, getUser } from '../../lib/auth';
@@ -15,8 +15,19 @@ const navLinks = [
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const user = getUser();
+  const location = useLocation();
   const navigate = useNavigate();
+  const user = getUser();
+
+  const path = location.pathname;
+  // Hide duplicate Dashboard & Logout buttons when inside dashboard/portal routes or tracking pages
+  const hideDashboardActions =
+    path.startsWith('/citizen') ||
+    path.startsWith('/cmo') ||
+    path.startsWith('/officer') ||
+    path.includes('/dashboard') ||
+    path.includes('/submit') ||
+    path.includes('/track');
 
   const dashboardLink =
     user?.role === 'CMO_ADMIN'
@@ -71,22 +82,26 @@ export default function Navbar() {
                 <span className="text-xs font-medium text-emerald-100/90 max-w-[150px] truncate select-none">
                   {user.name}
                 </span>
-                <Link
-                  to={dashboardLink}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-[#c9a227] hover:bg-[#e5c060] text-emerald-950 rounded-lg transition-colors shadow-2xs"
-                >
-                  <LayoutDashboard className="w-3.5 h-3.5" />
-                  <span>Dashboard</span>
-                </Link>
-                <button
-                  type="button"
-                  onClick={handleLogout}
-                  className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium text-emerald-100 hover:text-white hover:bg-white/10 rounded-lg transition-colors cursor-pointer border border-white/20"
-                  title="Logout"
-                >
-                  <LogOut className="w-3.5 h-3.5" />
-                  <span>Logout</span>
-                </button>
+                {!hideDashboardActions && (
+                  <>
+                    <Link
+                      to={dashboardLink}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-[#c9a227] hover:bg-[#e5c060] text-emerald-950 rounded-lg transition-colors shadow-2xs"
+                    >
+                      <LayoutDashboard className="w-3.5 h-3.5" />
+                      <span>Dashboard</span>
+                    </Link>
+                    <button
+                      type="button"
+                      onClick={handleLogout}
+                      className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium text-emerald-100 hover:text-white hover:bg-white/10 rounded-lg transition-colors cursor-pointer border border-white/20"
+                      title="Logout"
+                    >
+                      <LogOut className="w-3.5 h-3.5" />
+                      <span>Logout</span>
+                    </button>
+                  </>
+                )}
               </div>
             ) : (
               <>
@@ -154,27 +169,29 @@ export default function Navbar() {
               <div className="px-3 py-1 text-xs text-emerald-200">
                 Signed in as <strong className="text-white">{user.name}</strong>
               </div>
-              <div className="grid grid-cols-2 gap-2 px-1">
-                <Link
-                  to={dashboardLink}
-                  onClick={() => setMenuOpen(false)}
-                  className="flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-semibold bg-[#c9a227] hover:bg-[#e5c060] text-emerald-950 rounded-lg transition-colors shadow-2xs"
-                >
-                  <LayoutDashboard className="w-3.5 h-3.5" />
-                  <span>Dashboard</span>
-                </Link>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setMenuOpen(false);
-                    handleLogout();
-                  }}
-                  className="flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-medium text-rose-200 bg-rose-950/40 border border-rose-500/30 hover:bg-rose-900/60 rounded-lg transition-colors cursor-pointer"
-                >
-                  <LogOut className="w-3.5 h-3.5" />
-                  <span>Logout</span>
-                </button>
-              </div>
+              {!hideDashboardActions && (
+                <div className="grid grid-cols-2 gap-2 px-1">
+                  <Link
+                    to={dashboardLink}
+                    onClick={() => setMenuOpen(false)}
+                    className="flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-semibold bg-[#c9a227] hover:bg-[#e5c060] text-emerald-950 rounded-lg transition-colors shadow-2xs"
+                  >
+                    <LayoutDashboard className="w-3.5 h-3.5" />
+                    <span>Dashboard</span>
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMenuOpen(false);
+                      handleLogout();
+                    }}
+                    className="flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-medium text-rose-200 bg-rose-950/40 border border-rose-500/30 hover:bg-rose-900/60 rounded-lg transition-colors cursor-pointer"
+                  >
+                    <LogOut className="w-3.5 h-3.5" />
+                    <span>Logout</span>
+                  </button>
+                </div>
+              )}
             </div>
           ) : (
             <div className="pt-2 border-t border-white/10 space-y-1.5">
