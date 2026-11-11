@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Menu, X } from 'lucide-react';
-import KeralaEmblem from '../ui/KeralaEmblem';
+import { Menu, X, Landmark } from 'lucide-react';
 import { getUser } from '../../lib/auth';
 
 const navLinks = [
@@ -22,21 +21,17 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo & Brand Identity */}
-          <Link to="/" className="flex items-center gap-2.5 sm:gap-3 group select-none py-1">
-            <KeralaEmblem size={38} />
+          <Link to="/" className="flex items-center gap-3 group select-none py-1">
+            <div className="w-9 h-9 rounded-full bg-white/10 ring-1 ring-white/20 flex items-center justify-center shrink-0 group-hover:bg-white/15 transition-colors">
+              <Landmark className="w-5 h-5 text-[#f4d068]" />
+            </div>
             <div className="flex flex-col leading-tight">
-              <div className="flex items-center gap-1.5">
-                <span className="font-extrabold text-base sm:text-lg tracking-tight text-white group-hover:text-emerald-100 transition-colors">
-                  CM <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#ffe082] via-[#f7cb45] to-[#e5a824]">Keralam</span>
-                </span>
-                <span className="hidden sm:inline-flex items-center px-1.5 py-0.2 rounded text-[9px] font-bold uppercase tracking-wider bg-[#c9a227]/25 text-[#ffe082] border border-[#c9a227]/40 shadow-2xs">
-                  CMO
-                </span>
-              </div>
-              <div className="flex items-center gap-1.5 text-[10px] sm:text-[11px] font-medium tracking-wide text-emerald-200/90 uppercase">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#e5c060] inline-block animate-pulse shrink-0" />
-                <span>Grievance Redressal Portal</span>
-              </div>
+              <span className="font-semibold text-lg tracking-tight text-white group-hover:text-amber-100 transition-colors">
+                CM Keralam
+              </span>
+              <span className="text-[11px] font-normal tracking-wide text-emerald-200/80 -mt-0.5">
+                Public Grievance Portal
+              </span>
             </div>
           </Link>
 

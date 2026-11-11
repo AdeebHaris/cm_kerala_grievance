@@ -184,6 +184,7 @@ def _find_keyword_duplicates(
             "reference_id": g["reference_id"],
             "subject": g["subject"],
             "status": g["status"],
+            "created_at": g.get("created_at"),
         }
         for _, g in scored[:3]
     ]
@@ -299,6 +300,7 @@ async def analyze_grievance(
                         "reference_id": g["reference_id"],
                         "subject": g["subject"],
                         "status": g["status"],
+                        "created_at": g.get("created_at"),
                     }
                 )
                 seen_refs.add(ref_id)

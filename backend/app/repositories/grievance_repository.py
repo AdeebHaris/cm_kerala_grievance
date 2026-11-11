@@ -92,6 +92,7 @@ class GrievanceRepository:
             Grievance.status,
             Grievance.district,
             Grievance.category,
+            Grievance.created_at,
         ).order_by(Grievance.created_at.desc())
         if district:
             q = q.where(Grievance.district == district)
@@ -105,6 +106,7 @@ class GrievanceRepository:
                 "status": row[4],
                 "district": row[5],
                 "category": row[6],
+                "created_at": row[7].isoformat() if row[7] else None,
             }
             for row in r.all()
         ]

@@ -14,6 +14,7 @@ import {
   Tag,
   FileText,
   Trash2,
+  Clock,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import DashboardLayout from '../../components/layout/DashboardLayout';
@@ -21,7 +22,7 @@ import PriorityBadge from '../../components/ui/PriorityBadge';
 import api from '../../lib/api';
 import { KERALA_DISTRICTS, GRIEVANCE_CATEGORIES, GRIEVANCE_PRIORITIES } from '../../lib/constants';
 import { citizenSidebarLinks } from '../../lib/sidebarLinks';
-import type { AIAnalysisResult, Grievance } from '../../types';
+import type { AIAnalysisResult, DuplicateCandidate, Grievance } from '../../types';
 
 interface GrievanceFormValues {
   district: string;
@@ -29,6 +30,103 @@ interface GrievanceFormValues {
   subject: string;
   description: string;
   priority: 'LOW' | 'MEDIUM' | 'HIGH' | '';
+}
+
+function parseCandidateDate(candidate: DuplicateCandidate): Date | null {
+  if (candidate.created_at) {
+    const d = new Date(candidate.created_at);
+    if (!isNaN(d.getTime())) return d;
+  }
+  // Fallback: extract date from reference ID format GRV-YYYYMMDD-XXXX
+  const match = candidate.reference_id?.match(/GRV-(\d{4})(\d{2})(\d{2})/);
+  if (match) {
+    const [, y, m, d] = match;
+    const parsed = new Date(Number(y), Number(m) - 1, Number(d));
+    if (!isNaN(parsed.getTime())) return parsed;
+  }
+  return null;
+}
+
+function evaluateDuplicateRisk(candidates?: DuplicateCandidate[]) {
+  if (!candidates || candidates.length === 0) {
+    return {
+      hasDuplicate: false,
+      isStaleAndUnresolved: false,
+      blockSubmission: false,
+      candidate: null as DuplicateCandidate | null,
+      daysAgo: 0,
+      formattedDate: '',
+    };
+  }
+
+  const now = new Date();
+  const evaluated = candidates.map((cand) => {
+    const date = parseCandidateDate(cand);
+    const diffDays = date
+      ? Math.max(0, Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24)))
+      : 0;
+    const isUnresolved = cand.status !== 'RESOLVED';
+    const isStale = diffDays >= 7; // Older than 7 days threshold
+    return {
+      cand,
+      date,
+      diffDays,
+      isUnresolved,
+      isStale,
+      formattedDate: date
+        ? date.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })
+        : 'an earlier date',
+    };
+  });
+
+  // Recent unresolved duplicate -> strictly block submission (< 7 days old)
+  const recentCandidate = evaluated.find((e) => !e.isStale && e.isUnresolved);
+  if (recentCandidate) {
+    return {
+      hasDuplicate: true,
+      isStaleAndUnresolved: false,
+      blockSubmission: true,
+      candidate: recentCandidate.cand,
+      daysAgo: recentCandidate.diffDays,
+      formattedDate: recentCandidate.formattedDate,
+    };
+  }
+
+  // Stale unresolved duplicate -> allow submission with escalated priority (>= 7 days old)
+  const staleUnresolved = evaluated.find((e) => e.isStale && e.isUnresolved);
+  if (staleUnresolved) {
+    return {
+      hasDuplicate: true,
+      isStaleAndUnresolved: true,
+      blockSubmission: false,
+      candidate: staleUnresolved.cand,
+      daysAgo: staleUnresolved.diffDays,
+      formattedDate: staleUnresolved.formattedDate,
+    };
+  }
+
+  // Any other recent duplicate -> block submission
+  const anyRecent = evaluated.find((e) => !e.isStale);
+  if (anyRecent) {
+    return {
+      hasDuplicate: true,
+      isStaleAndUnresolved: false,
+      blockSubmission: true,
+      candidate: anyRecent.cand,
+      daysAgo: anyRecent.diffDays,
+      formattedDate: anyRecent.formattedDate,
+    };
+  }
+
+  const first = evaluated[0];
+  return {
+    hasDuplicate: true,
+    isStaleAndUnresolved: false,
+    blockSubmission: false,
+    candidate: first.cand,
+    daysAgo: first.diffDays,
+    formattedDate: first.formattedDate,
+  };
 }
 
 export default function SubmitGrievance() {
@@ -155,7 +253,20 @@ export default function SubmitGrievance() {
       if (data.category) {
         setValue('category', data.category, { shouldValidate: true });
       }
-      if (data.priority) {
+      const evalResult = evaluateDuplicateRisk(data.duplicate_candidates);
+      if (evalResult.isStaleAndUnresolved) {
+        setValue('priority', 'HIGH', { shouldValidate: true });
+        toast.success(
+          'Older duplicate is >7 days old & unresolved. Resubmission allowed with HIGH priority!'
+        );
+      } else if (evalResult.blockSubmission) {
+        if (data.priority) {
+          setValue('priority', data.priority, { shouldValidate: true });
+        }
+        toast.error(
+          'Active duplicate found. Submission locked — please verify the existing grievance date.'
+        );
+      } else if (data.priority) {
         setValue('priority', data.priority, { shouldValidate: true });
       }
       toast.success(
@@ -224,12 +335,16 @@ export default function SubmitGrievance() {
     });
   };
 
+  const dupEval = evaluateDuplicateRisk(aiResult?.duplicate_candidates);
+
   const applyAISuggestions = () => {
     if (!aiResult) return;
     if (aiResult.category) {
       setValue('category', aiResult.category, { shouldValidate: true });
     }
-    if (aiResult.priority) {
+    if (dupEval.isStaleAndUnresolved) {
+      setValue('priority', 'HIGH', { shouldValidate: true });
+    } else if (aiResult.priority) {
       setValue('priority', aiResult.priority, { shouldValidate: true });
     }
     if (aiResult.subject) {
@@ -483,27 +598,62 @@ export default function SubmitGrievance() {
                 </p>
               </div>
 
-              {/* Duplicate alert if present */}
-              {(aiResult.is_duplicate_risk ||
-                (aiResult.duplicate_candidates && aiResult.duplicate_candidates.length > 0)) && (
-                <div className="bg-rose-50/90 border border-rose-200 rounded-xl p-3.5 space-y-2">
-                  <div className="flex items-center gap-1.5 text-xs font-bold text-rose-800">
-                    <AlertTriangle className="w-4 h-4 text-rose-600" />
-                    Potential Duplicate Grievance Alert
-                  </div>
-                  {aiResult.duplicate_candidates && aiResult.duplicate_candidates.length > 0 ? (
-                    <ul className="space-y-1 text-xs text-rose-700">
-                      {aiResult.duplicate_candidates.map((dup) => (
-                        <li key={dup.reference_id}>
-                          <span className="font-mono font-semibold">{dup.reference_id}</span>:{' '}
-                          {dup.subject} ({dup.status})
-                        </li>
-                      ))}
-                    </ul>
+              {/* Duplicate analysis card */}
+              {(aiResult.is_duplicate_risk || dupEval.hasDuplicate) && (
+                <div>
+                  {dupEval.isStaleAndUnresolved ? (
+                    <div className="bg-amber-50/95 border border-amber-300 rounded-xl p-4 space-y-2.5">
+                      <div className="flex items-start gap-2.5">
+                        <Clock className="w-5 h-5 text-amber-700 shrink-0 mt-0.5" />
+                        <div className="space-y-1">
+                          <h4 className="text-xs font-bold text-amber-900 uppercase tracking-wide">
+                            Prolonged Grievance Resubmission Allowed (Priority Escalated)
+                          </h4>
+                          <p className="text-xs text-amber-900 leading-relaxed">
+                            An existing grievance (<span className="font-mono font-semibold">{dupEval.candidate?.reference_id}</span>: &ldquo;{dupEval.candidate?.subject}&rdquo;) was filed on <strong>{dupEval.formattedDate}</strong> ({dupEval.daysAgo} days ago) and is still <strong>{dupEval.candidate?.status}</strong>.
+                          </p>
+                          <p className="text-xs font-semibold text-emerald-800 bg-emerald-100/80 inline-block px-2.5 py-1 rounded-md border border-emerald-200 mt-1">
+                            ⚡ Since this issue has remained unresolved beyond normal service timelines, you may resubmit your grievance with <strong>HIGH priority</strong> for expedited CMO review.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  ) : dupEval.blockSubmission ? (
+                    <div className="bg-rose-50/95 border border-rose-300 rounded-xl p-4 space-y-2.5">
+                      <div className="flex items-start gap-2.5">
+                        <AlertTriangle className="w-5 h-5 text-rose-600 shrink-0 mt-0.5" />
+                        <div className="space-y-1">
+                          <h4 className="text-xs font-bold text-rose-900 uppercase tracking-wide">
+                            Active Grievance Already Filed — Submission Restricted
+                          </h4>
+                          <p className="text-xs text-rose-800 leading-relaxed">
+                            A matching grievance (<span className="font-mono font-semibold">{dupEval.candidate?.reference_id}</span>: &ldquo;{dupEval.candidate?.subject}&rdquo;) was already submitted on <strong>{dupEval.formattedDate}</strong> ({dupEval.daysAgo === 0 ? 'today' : `${dupEval.daysAgo} days ago`}) and is currently <strong>{dupEval.candidate?.status}</strong>.
+                          </p>
+                          <p className="text-xs text-rose-700">
+                            Please verify the date and status of the already submitted grievance. To prevent duplicate administrative queues, re-submissions are restricted while the recent grievance is actively being processed.
+                          </p>
+                          <div className="pt-1.5 flex items-center gap-2">
+                            <Link
+                              to={`/track?ref=${dupEval.candidate?.reference_id}`}
+                              target="_blank"
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-xs font-semibold transition-colors shadow-2xs"
+                            >
+                              Verify & Track Grievance {dupEval.candidate?.reference_id}
+                            </Link>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   ) : (
-                    <p className="text-xs text-rose-700">
-                      A similar grievance may already exist in this district.
-                    </p>
+                    <div className="bg-rose-50/90 border border-rose-200 rounded-xl p-3.5 space-y-2">
+                      <div className="flex items-center gap-1.5 text-xs font-bold text-rose-800">
+                        <AlertTriangle className="w-4 h-4 text-rose-600" />
+                        Potential Duplicate Grievance Alert
+                      </div>
+                      <p className="text-xs text-rose-700">
+                        A similar grievance may already exist in this district.
+                      </p>
+                    </div>
                   )}
                 </div>
               )}
@@ -542,7 +692,15 @@ export default function SubmitGrievance() {
           </div>
 
           <form
-            onSubmit={handleSubmit((data) => submitMutation.mutate(data))}
+            onSubmit={handleSubmit((data) => {
+              if (dupEval.blockSubmission) {
+                toast.error(
+                  `Submission locked: Active duplicate was already filed on ${dupEval.formattedDate}. Please verify the existing grievance.`
+                );
+                return;
+              }
+              submitMutation.mutate(data);
+            })}
             className="space-y-4"
           >
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -637,13 +795,47 @@ export default function SubmitGrievance() {
               </label>
             </div>
 
+            {dupEval.blockSubmission && (
+              <div className="p-3.5 rounded-xl bg-rose-50 border border-rose-300 text-xs text-rose-800 flex items-start gap-2.5">
+                <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+                <div className="space-y-1">
+                  <span className="font-bold block">
+                    Submission Disabled — Please verify existing submission date
+                  </span>
+                  <span>
+                    A duplicate grievance was already filed on <strong>{dupEval.formattedDate}</strong>. Submissions are temporarily paused to prevent duplicate administrative queues.
+                  </span>
+                </div>
+              </div>
+            )}
+
             <button
               type="submit"
-              disabled={submitMutation.isPending}
-              className="w-full flex items-center justify-center gap-2 py-3 px-5 rounded-xl bg-[#1a5c38] hover:bg-[#2d7a52] text-white font-bold text-base transition-colors disabled:opacity-60 cursor-pointer shadow-sm"
+              disabled={submitMutation.isPending || dupEval.blockSubmission}
+              className={`w-full flex items-center justify-center gap-2 py-3 px-5 rounded-xl font-bold text-base transition-colors shadow-sm ${
+                dupEval.blockSubmission
+                  ? 'bg-gray-200 text-gray-500 cursor-not-allowed border border-gray-300'
+                  : dupEval.isStaleAndUnresolved
+                  ? 'bg-amber-700 hover:bg-amber-800 text-white cursor-pointer'
+                  : 'bg-[#1a5c38] hover:bg-[#2d7a52] text-white cursor-pointer'
+              }`}
             >
-              <Send className="w-4 h-4" />
-              {submitMutation.isPending ? 'Submitting Grievance...' : 'Submit Grievance to CMO'}
+              {dupEval.blockSubmission ? (
+                <>
+                  <AlertTriangle className="w-4 h-4 text-gray-500" />
+                  <span>Submission Locked — Recent Duplicate Exists</span>
+                </>
+              ) : dupEval.isStaleAndUnresolved ? (
+                <>
+                  <Send className="w-4 h-4" />
+                  <span>{submitMutation.isPending ? 'Submitting...' : 'Resubmit Grievance with High Priority'}</span>
+                </>
+              ) : (
+                <>
+                  <Send className="w-4 h-4" />
+                  <span>{submitMutation.isPending ? 'Submitting Grievance...' : 'Submit Grievance to CMO'}</span>
+                </>
+              )}
             </button>
           </form>
         </div>

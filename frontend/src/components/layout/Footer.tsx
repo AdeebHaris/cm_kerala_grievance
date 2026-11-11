@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Mail, Phone, MapPin, ChevronRight, ShieldCheck } from 'lucide-react';
-import KeralaEmblem from '../ui/KeralaEmblem';
+import { Mail, Phone, MapPin, ChevronRight, ShieldCheck, Landmark } from 'lucide-react';
 
 export default function Footer() {
   return (
@@ -10,19 +9,15 @@ export default function Footer() {
           {/* Column 1: Brand & Identity (span 4) */}
           <div className="lg:col-span-4 space-y-4">
             <Link to="/" className="flex items-center gap-3 group select-none">
-              <KeralaEmblem size={44} />
+              <div className="w-10 h-10 rounded-full bg-white/10 ring-1 ring-white/20 flex items-center justify-center shrink-0 group-hover:bg-white/15 transition-colors">
+                <Landmark className="w-5 h-5 text-[#f4d068]" />
+              </div>
               <div>
-                <div className="flex items-center gap-2">
-                  <span className="font-extrabold text-lg tracking-tight text-white group-hover:text-emerald-100 transition-colors">
-                    CM <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#ffe082] via-[#f7cb45] to-[#e5a824]">Keralam</span>
-                  </span>
-                  <span className="px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider bg-[#c9a227]/25 text-[#ffe082] border border-[#c9a227]/40 shadow-2xs">
-                    Official
-                  </span>
+                <div className="font-semibold text-lg text-white group-hover:text-amber-100 transition-colors">
+                  CM Keralam
                 </div>
-                <div className="text-[11px] text-emerald-200 uppercase tracking-wider font-medium flex items-center gap-1.5 mt-0.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#e5c060] inline-block shrink-0" />
-                  <span>Public Grievance Redressal Portal</span>
+                <div className="text-xs text-emerald-200/80">
+                  Public Grievance Portal
                 </div>
               </div>
             </Link>

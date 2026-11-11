@@ -87,6 +87,7 @@ export interface DuplicateCandidate {
   reference_id: string;
   subject: string;
   status: string;
+  created_at?: string;
 }
 
 export interface AIAnalysisResult {
