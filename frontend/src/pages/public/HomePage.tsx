@@ -132,12 +132,7 @@ export default function HomePage() {
           <div className="lg:col-span-5 flex justify-center z-10">
             <div className="relative w-full max-w-sm bg-white/10 backdrop-blur-sm border border-[#c9a227]/40 rounded-2xl p-6 shadow-2xl">
               <div className="flex items-center justify-between mb-4 pb-3 border-b border-white/15">
-                <div>
-                  <span className="text-xs uppercase tracking-wider text-[#e5c060] font-semibold">
-                    Government Secretariat
-                  </span>
-                  <h2 className="text-lg font-bold text-white">Public Grievance Cell</h2>
-                </div>
+                <h2 className="text-lg font-bold text-white">Public Grievance Cell</h2>
                 <Landmark className="w-7 h-7 text-[#f4d068] shrink-0" />
               </div>
 
@@ -269,9 +264,12 @@ export default function HomePage() {
       {/* Clean & Minimal Workflow Teaser Section */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
         <div className="max-w-3xl mx-auto space-y-4">
-          <span className="text-xs font-bold uppercase tracking-widest text-[#1a5c38] bg-emerald-50 px-3.5 py-1 rounded-full border border-emerald-200 inline-block">
-            Transparent Governance
-          </span>
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-gradient-to-r from-emerald-950 via-[#14532d] to-[#1a5c38] text-white shadow-sm border border-emerald-700/50">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#f4d068] shadow-[0_0_8px_#f4d068] animate-pulse shrink-0" />
+            <span className="text-[11px] font-bold tracking-widest uppercase text-[#fef9c3]">
+              Transparent Governance
+            </span>
+          </div>
           <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 tracking-tight">
             How Your Grievance Gets Solved
           </h2>
