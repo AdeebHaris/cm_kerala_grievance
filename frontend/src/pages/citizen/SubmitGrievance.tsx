@@ -249,6 +249,8 @@ export default function SubmitGrievance() {
     new Set([
       ...GRIEVANCE_CATEGORIES,
       ...(aiResult?.category ? [aiResult.category] : []),
+      ...(unrestoredDraft?.category ? [unrestoredDraft.category] : []),
+      ...(categoryValue ? [categoryValue] : []),
     ])
   );
 
@@ -312,6 +314,8 @@ export default function SubmitGrievance() {
                 </label>
                 <select
                   {...register('district', { required: 'Please select a district' })}
+                  value={districtValue || ''}
+                  onChange={(e) => setValue('district', e.target.value, { shouldValidate: true })}
                   className="w-full px-3.5 py-2.5 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-[#1a5c38] text-sm"
                 >
                   <option value="">Select Keralam District</option>
@@ -553,6 +557,8 @@ export default function SubmitGrievance() {
                 </label>
                 <select
                   {...register('category', { required: 'Category is required' })}
+                  value={categoryValue || ''}
+                  onChange={(e) => setValue('category', e.target.value, { shouldValidate: true })}
                   className="w-full px-3.5 py-2.5 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-[#1a5c38] text-sm"
                 >
                   <option value="">Select Category</option>
@@ -573,6 +579,12 @@ export default function SubmitGrievance() {
                 </label>
                 <select
                   {...register('priority', { required: 'Priority is required' })}
+                  value={priorityValue || ''}
+                  onChange={(e) =>
+                    setValue('priority', e.target.value as 'LOW' | 'MEDIUM' | 'HIGH' | '', {
+                      shouldValidate: true,
+                    })
+                  }
                   className="w-full px-3.5 py-2.5 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-[#1a5c38] text-sm"
                 >
                   <option value="">Select Priority</option>

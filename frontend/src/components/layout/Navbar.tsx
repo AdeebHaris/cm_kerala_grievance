@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Menu, X, LayoutDashboard } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import { getUser } from '../../lib/auth';
 
 const navLinks = [
@@ -15,13 +15,6 @@ const navLinks = [
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const user = getUser();
-
-  const dashboardLink =
-    user?.role === 'CMO_ADMIN'
-      ? '/cmo/dashboard'
-      : user?.role === 'OFFICER'
-      ? '/officer/dashboard'
-      : '/citizen/dashboard';
 
   return (
     <nav className="bg-[#1a5c38] text-white shadow-lg sticky top-0 z-50">
@@ -52,13 +45,9 @@ export default function Navbar() {
           {/* Right side */}
           <div className="hidden md:flex items-center gap-2">
             {user ? (
-              <Link
-                to={dashboardLink}
-                className="flex items-center gap-2 px-3.5 py-1.5 bg-[#2d7a52] rounded-lg hover:bg-[#0f3d25] transition-colors text-sm font-medium"
-              >
-                <LayoutDashboard className="w-4 h-4 text-[#e5c060]" />
-                <span className="max-w-[150px] truncate">{user.name}</span>
-              </Link>
+              <span className="text-sm font-semibold text-[#e5c060] px-3 py-1.5">
+                {user.name}
+              </span>
             ) : (
               <>
                 <Link
@@ -107,14 +96,9 @@ export default function Navbar() {
             </Link>
           ))}
           {user ? (
-            <Link
-              to={dashboardLink}
-              onClick={() => setMenuOpen(false)}
-              className="flex items-center gap-2 px-3 py-2 text-sm bg-[#2d7a52] rounded text-white font-medium"
-            >
-              <LayoutDashboard className="w-4 h-4 text-[#e5c060]" />
-              <span>{user.name} (Dashboard)</span>
-            </Link>
+            <span className="block px-3 py-2 text-sm text-[#e5c060] font-medium">
+              {user.name}
+            </span>
           ) : (
             <>
               <Link

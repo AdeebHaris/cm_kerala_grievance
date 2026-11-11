@@ -94,6 +94,52 @@ def _detect_district(text: str) -> Optional[str]:
     return None
 
 
+CATEGORIES = [
+    "Roads & Infrastructure",
+    "Water Supply & Sanitation",
+    "Electricity & Power",
+    "Healthcare & Hospitals",
+    "Education & Schools",
+    "Revenue & Land Records",
+    "Agriculture & Irrigation",
+    "Public Transport",
+    "Forest & Environment",
+    "Social Welfare & Pensions",
+    "General",
+]
+
+
+def _normalize_category(raw_cat: str) -> str:
+    if not raw_cat:
+        return "General"
+    cleaned = raw_cat.strip()
+    for cat in CATEGORIES:
+        if cleaned.lower() == cat.lower():
+            return cat
+    low = cleaned.lower()
+    if any(k in low for k in ["road", "pothole", "bridge", "culvert", "street", "highway", "traffic", "pavement"]):
+        return "Roads & Infrastructure"
+    if any(k in low for k in ["water", "pipe", "leak", "sewage", "drain", "drainage", "tap", "drinking"]):
+        return "Water Supply & Sanitation"
+    if any(k in low for k in ["electric", "power", "kseb", "light", "wire", "cable", "transformer", "outage"]):
+        return "Electricity & Power"
+    if any(k in low for k in ["health", "hospital", "doctor", "clinic", "medicine", "sanitation", "disease", "food safety"]):
+        return "Healthcare & Hospitals"
+    if any(k in low for k in ["school", "education", "college", "teacher", "student", "classroom"]):
+        return "Education & Schools"
+    if any(k in low for k in ["land", "revenue", "pattayam", "certificate", "tax", "village office"]):
+        return "Revenue & Land Records"
+    if any(k in low for k in ["farm", "agriculture", "crop", "paddy", "irrigation", "krishi"]):
+        return "Agriculture & Irrigation"
+    if any(k in low for k in ["bus", "transport", "ksrtc", "vehicle", "route"]):
+        return "Public Transport"
+    if any(k in low for k in ["forest", "wildlife", "animal", "tree", "environment", "nature"]):
+        return "Forest & Environment"
+    if any(k in low for k in ["pension", "welfare", "disability", "senior", "allowance", "widow"]):
+        return "Social Welfare & Pensions"
+    return "General"
+
+
 def _normalize_department(raw_dept: str) -> str:
     if not raw_dept:
         return "Public Works Department"
@@ -174,6 +220,7 @@ async def analyze_grievance(
                 "You are an AI assistant for the Kerala CM Grievance Portal. "
                 "You must return ONLY a single valid JSON object, without markdown formatting or code blocks. "
                 f"Available departments (choose exact name): {', '.join(DEPARTMENTS)}. "
+                f"Available categories (choose exact name): {', '.join(CATEGORIES)}. "
                 "Priority: LOW=minor, MEDIUM=daily life impact, HIGH=urgent/safety."
             ),
         },
@@ -183,8 +230,8 @@ async def analyze_grievance(
                 f"Analyze this grievance:\n{clean_desc}\n{recent_context}\n\n"
                 "Return a JSON object with this exact structure:\n"
                 "{\n"
-                '  "department": "<department name>",\n'
-                '  "category": "<category name>",\n'
+                '  "department": "<one of the exact department names above>",\n'
+                '  "category": "<one of the exact category names above>",\n'
                 '  "subject": "<informative title under 80 chars>",\n'
                 '  "priority": "LOW" | "MEDIUM" | "HIGH",\n'
                 '  "summary": "<one sentence briefing under 100 chars>",\n'
@@ -267,7 +314,7 @@ async def analyze_grievance(
 
         return {
             "department": dept,
-            "category": str(parsed.get("category", "General"))[:100],
+            "category": _normalize_category(str(parsed.get("category", ""))),
             "subject": suggested_subject[:120],
             "priority": priority,
             "summary": str(parsed.get("summary", description[:100]))[:100],
@@ -281,7 +328,7 @@ async def analyze_grievance(
         fallback_subject = first_sentence[:80] if len(first_sentence) > 5 else description[:80].strip()
         return {
             "department": "Public Works Department",
-            "category": "General",
+            "category": _normalize_category(description),
             "subject": fallback_subject,
             "priority": "MEDIUM",
             "summary": description[:100],
