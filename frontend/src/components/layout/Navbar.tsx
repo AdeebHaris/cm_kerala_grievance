@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Menu, X, Landmark, LayoutDashboard, LogOut } from 'lucide-react';
+import { Menu, X, Landmark, LayoutDashboard, LogOut, User } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { clearAuth, getUser } from '../../lib/auth';
 
@@ -76,32 +76,21 @@ export default function Navbar() {
           </div>
 
           {/* Right side */}
-          <div className="hidden md:flex items-center gap-2">
+          <div className="hidden md:flex items-center gap-3">
             {user ? (
-              <div className="flex items-center gap-2.5">
-                {/* Distinguished Profile Capsule */}
-                <div className="inline-flex items-center gap-2 py-1 pl-1.5 pr-3 rounded-full bg-emerald-950/40 border border-emerald-400/20 text-white select-none">
-                  <div className="w-6 h-6 rounded-full bg-[#c9a227]/20 border border-[#c9a227]/60 text-[#f4d068] flex items-center justify-center text-xs font-bold shrink-0">
-                    {user.name.charAt(0).toUpperCase()}
-                  </div>
-                  <div className="flex flex-col text-left leading-tight">
-                    <span className="text-xs font-semibold text-white max-w-[130px] truncate">
-                      {user.name}
-                    </span>
-                    <span className="text-[10px] text-emerald-300 font-medium">
-                      {user.role === 'CMO_ADMIN'
-                        ? 'CMO Admin'
-                        : user.role === 'OFFICER'
-                        ? 'Officer'
-                        : 'Citizen'}
-                    </span>
-                  </div>
+              <div className="flex items-center gap-3">
+                {/* Minimalist distinguished user identity */}
+                <div className="flex items-center gap-1.5 select-none text-white">
+                  <User className="w-4 h-4 text-[#f4d068] shrink-0" />
+                  <span className="text-sm font-medium text-white max-w-[140px] truncate">
+                    {user.name}
+                  </span>
                 </div>
                 {!hideDashboardActions && (
                   <>
                     <Link
                       to={dashboardLink}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-[#c9a227] hover:bg-[#e5c060] text-emerald-950 rounded-lg transition-colors shadow-2xs"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-[#c9a227] hover:bg-[#e5c060] text-emerald-950 rounded-lg transition-colors"
                     >
                       <LayoutDashboard className="w-3.5 h-3.5" />
                       <span>Dashboard</span>
@@ -181,20 +170,9 @@ export default function Navbar() {
           ))}
           {user ? (
             <div className="pt-2 border-t border-white/10 space-y-2 mt-2">
-              <div className="flex items-center gap-2.5 px-3 py-2 bg-emerald-950/40 rounded-lg border border-emerald-400/20">
-                <div className="w-7 h-7 rounded-full bg-[#c9a227]/20 border border-[#c9a227]/60 text-[#f4d068] flex items-center justify-center text-xs font-bold shrink-0">
-                  {user.name.charAt(0).toUpperCase()}
-                </div>
-                <div className="flex flex-col text-left leading-tight">
-                  <span className="text-xs font-semibold text-white">{user.name}</span>
-                  <span className="text-[10px] text-emerald-300 font-medium">
-                    {user.role === 'CMO_ADMIN'
-                      ? 'CMO Administrator'
-                      : user.role === 'OFFICER'
-                      ? 'Department Officer'
-                      : 'Verified Citizen'}
-                  </span>
-                </div>
+              <div className="flex items-center gap-2 px-3 py-1.5 text-white">
+                <User className="w-4 h-4 text-[#f4d068] shrink-0" />
+                <span className="text-sm font-medium">{user.name}</span>
               </div>
               {!hideDashboardActions && (
                 <div className="grid grid-cols-2 gap-2 px-1">
