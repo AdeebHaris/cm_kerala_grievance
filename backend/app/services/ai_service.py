@@ -166,36 +166,64 @@ async def analyze_grievance(
         ]
         recent_context = "\nRecent existing grievances for duplicate checking:\n" + "\n".join(lines)
 
+    clean_desc = (description or "").replace('"', "'").strip()
+    messages = [
+        {
+            "role": "system",
+            "content": (
+                "You are an AI assistant for the Kerala CM Grievance Portal. "
+                "You must return ONLY a single valid JSON object, without markdown formatting or code blocks. "
+                f"Available departments (choose exact name): {', '.join(DEPARTMENTS)}. "
+                "Priority: LOW=minor, MEDIUM=daily life impact, HIGH=urgent/safety."
+            ),
+        },
+        {
+            "role": "user",
+            "content": (
+                f"Analyze this grievance:\n{clean_desc}\n{recent_context}\n\n"
+                "Return a JSON object with this exact structure:\n"
+                "{\n"
+                '  "department": "<department name>",\n'
+                '  "category": "<category name>",\n'
+                '  "subject": "<informative title under 80 chars>",\n'
+                '  "priority": "LOW" | "MEDIUM" | "HIGH",\n'
+                '  "summary": "<one sentence briefing under 100 chars>",\n'
+                '  "is_duplicate_risk": false,\n'
+                '  "duplicate_ref_ids": []\n'
+                "}"
+            ),
+        },
+    ]
+
     try:
-        response = await client.chat.completions.create(
-            model=MODEL_NAME,
-            messages=[
-                {
-                    "role": "system",
-                    "content": (
-                        "You are an AI assistant for the Kerala CM Grievance Portal. "
-                        "Analyze grievances and return ONLY valid JSON, no markdown or extra text. "
-                        f"Available departments (choose exact name): {', '.join(DEPARTMENTS)}. "
-                        "Priority: LOW=minor, MEDIUM=daily life impact, HIGH=urgent/safety. "
-                        "If the new grievance strongly overlaps with any recent existing grievances, "
-                        "set is_duplicate_risk=true and list matching reference_ids in duplicate_ref_ids."
-                    ),
-                },
-                {
-                    "role": "user",
-                    "content": (
-                        f'Analyze this grievance: "{description}"{recent_context}\n'
-                        'Return ONLY valid JSON: {"department":"<exact department name>",'
-                        '"category":"<short category>","subject":"<concise informative grievance title, max 80 chars>",'
-                        '"priority":"LOW|MEDIUM|HIGH","summary":"<max 100 chars>",'
-                        '"is_duplicate_risk":false,"duplicate_ref_ids":[]}'
-                    ),
-                },
-            ],
-            temperature=0.2,
-            max_tokens=1024,
-            response_format={"type": "json_object"},
-        )
+        response = None
+        # Try primary model with json_object
+        try:
+            response = await client.chat.completions.create(
+                model=MODEL_NAME,
+                messages=messages,
+                temperature=0.1,
+                max_tokens=1024,
+                response_format={"type": "json_object"},
+            )
+        except Exception:
+            # If Groq strict JSON validator returns 400 or fails, call without response_format and extract JSON
+            try:
+                response = await client.chat.completions.create(
+                    model=MODEL_NAME,
+                    messages=messages,
+                    temperature=0.1,
+                    max_tokens=1024,
+                )
+            except Exception:
+                # Secondary fallback model on Groq
+                response = await client.chat.completions.create(
+                    model="llama-3.3-70b-versatile",
+                    messages=messages,
+                    temperature=0.1,
+                    max_tokens=1024,
+                )
+
         content = (response.choices[0].message.content or "").strip()
         match = re.search(r"\{[\s\S]*\}", content)
         if not match:
@@ -261,5 +289,5 @@ async def analyze_grievance(
             "duplicate_candidates": keyword_candidates,
             "model_used": MODEL_NAME,
             "is_fallback": True,
-            "fallback_reason": str(e),
+            "fallback_reason": "Rule-based classifier applied",
         }

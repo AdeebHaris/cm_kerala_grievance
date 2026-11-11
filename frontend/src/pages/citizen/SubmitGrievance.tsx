@@ -28,7 +28,7 @@ interface GrievanceFormValues {
   category: string;
   subject: string;
   description: string;
-  priority: 'LOW' | 'MEDIUM' | 'HIGH';
+  priority: 'LOW' | 'MEDIUM' | 'HIGH' | '';
 }
 
 export default function SubmitGrievance() {
@@ -47,10 +47,10 @@ export default function SubmitGrievance() {
   } = useForm<GrievanceFormValues>({
     defaultValues: {
       district: '',
-      category: 'General',
+      category: '',
       subject: '',
       description: '',
-      priority: 'MEDIUM',
+      priority: '',
     },
   });
 
@@ -92,15 +92,15 @@ export default function SubmitGrievance() {
 
   // Auto-save draft when the user actively types
   useEffect(() => {
-    if (descriptionValue || subjectValue || districtValue) {
+    if (descriptionValue?.trim() || subjectValue?.trim() || districtValue) {
       try {
         const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         const payload = {
           district: districtValue || '',
           description: descriptionValue || '',
           subject: subjectValue || '',
-          category: categoryValue || 'General',
-          priority: priorityValue || 'MEDIUM',
+          category: categoryValue || '',
+          priority: priorityValue || '',
           customSummary,
           savedAt: now,
         };
@@ -118,8 +118,8 @@ export default function SubmitGrievance() {
     if (draftData.district) setValue('district', draftData.district, { shouldValidate: true });
     if (draftData.description) setValue('description', draftData.description, { shouldValidate: true });
     if (draftData.subject) setValue('subject', draftData.subject, { shouldValidate: true });
-    if (draftData.category) setValue('category', draftData.category);
-    if (draftData.priority) setValue('priority', draftData.priority as 'LOW' | 'MEDIUM' | 'HIGH');
+    if (draftData.category) setValue('category', draftData.category, { shouldValidate: true });
+    if (draftData.priority) setValue('priority', draftData.priority as 'LOW' | 'MEDIUM' | 'HIGH', { shouldValidate: true });
     if (draftData.customSummary) setCustomSummary(draftData.customSummary);
     setIsDraftRestored(true);
     toast.success('Draft restored to form');
@@ -131,10 +131,10 @@ export default function SubmitGrievance() {
     } catch {}
     reset({
       district: '',
-      category: 'General',
+      category: '',
       subject: '',
       description: '',
-      priority: 'MEDIUM',
+      priority: '',
     });
     setDraftData(null);
     setIsDraftRestored(false);
@@ -361,10 +361,7 @@ export default function SubmitGrievance() {
               </div>
             </div>
 
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-1">
-              <p className="text-xs text-gray-500">
-                Provide as much detail as possible (location, landmark, severity).
-              </p>
+            <div className="flex justify-end pt-1">
               <button
                 type="button"
                 onClick={handleAnalyze}
@@ -403,12 +400,6 @@ export default function SubmitGrievance() {
                   {aiResult.is_fallback ? 'Rule Fallback' : 'Groq AI · Auto-Triage'}
                 </span>
               </div>
-
-              {aiResult.is_fallback && aiResult.fallback_reason && (
-                <p className="text-xs text-amber-800 bg-amber-50 rounded-lg p-2.5 border border-amber-200/60">
-                  Note: {aiResult.fallback_reason}
-                </p>
-              )}
 
               {/* Suggested Title / Subject */}
               {aiResult.subject && (
@@ -583,6 +574,7 @@ export default function SubmitGrievance() {
                   {...register('category', { required: 'Category is required' })}
                   className="w-full px-3.5 py-2.5 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-[#1a5c38] text-sm"
                 >
+                  <option value="">Select Category</option>
                   {categoryOptions.map((c) => (
                     <option key={c} value={c}>
                       {c}
@@ -602,6 +594,7 @@ export default function SubmitGrievance() {
                   {...register('priority', { required: 'Priority is required' })}
                   className="w-full px-3.5 py-2.5 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-[#1a5c38] text-sm"
                 >
+                  <option value="">Select Priority</option>
                   {GRIEVANCE_PRIORITIES.map((p) => (
                     <option key={p} value={p}>
                       {p}
