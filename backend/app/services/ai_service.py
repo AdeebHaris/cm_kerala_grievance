@@ -43,13 +43,55 @@ DEPARTMENT_ALIASES = {
     "social welfare": "Social Welfare Department",
 }
 
+DISTRICT_ALIASES = {
+    "trivandrum": "Thiruvananthapuram",
+    "thiruvananthapuram": "Thiruvananthapuram",
+    "kollam": "Kollam",
+    "quilon": "Kollam",
+    "pathanamthitta": "Pathanamthitta",
+    "alappuzha": "Alappuzha",
+    "alleppey": "Alappuzha",
+    "kottayam": "Kottayam",
+    "idukki": "Idukki",
+    "ernakulam": "Ernakulam",
+    "kochi": "Ernakulam",
+    "cochin": "Ernakulam",
+    "thrissur": "Thrissur",
+    "trichur": "Thrissur",
+    "palakkad": "Palakkad",
+    "palghat": "Palakkad",
+    "malappuram": "Malappuram",
+    "kozhikode": "Kozhikode",
+    "calicut": "Kozhikode",
+    "wayanad": "Wayanad",
+    "kannur": "Kannur",
+    "cannanor": "Kannur",
+    "kasaragod": "Kasaragod",
+}
+
 STOPWORDS = {
     "this", "that", "with", "from", "have", "been", "were", "they", "their",
     "there", "about", "which", "when", "what", "where", "very", "more", "some",
     "than", "also", "into", "over", "near", "here", "please", "kindly", "issue",
     "problem", "grievance", "complaint", "kerala", "keralam", "days", "week", "month",
-    "road", "street", "area", "water", "heavy", "work", "action", "public", "people",
+    "road", "roads", "street", "streets", "area", "water", "heavy", "work", "works",
+    "action", "public", "people", "accident", "accidents", "damage", "damaged",
+    "broken", "danger", "dangerous", "traffic", "vehicle", "vehicles", "daily",
+    "morning", "evening", "night", "drain", "drainage", "overflow", "leakage",
+    "culvert", "railing", "bridge", "pipe", "pipes", "pothole", "potholes",
+    "supply", "cleaning", "waste", "garbage", "cable", "cables", "power",
+    "electric", "electricity", "light", "lights", "station", "urgent",
+    "immediately", "authorities", "concerned", "resident", "residents",
+    "facing", "severe", "causing", "since", "yesterday", "today", "tomorrow",
 }
+
+
+def _detect_district(text: str) -> Optional[str]:
+    lowered = (text or "").lower()
+    for alias, canonical in DISTRICT_ALIASES.items():
+        if re.search(r"\b" + re.escape(alias) + r"\b", lowered):
+            return canonical
+    return None
 
 
 def _normalize_department(raw_dept: str) -> str:
@@ -79,17 +121,16 @@ def _find_keyword_duplicates(
     if not desc_tokens or not recent_grievances:
         return []
     scored = []
+    effective_district = district or _detect_district(description)
     for g in recent_grievances:
-        # If district is known, only match grievances in the exact same district
-        if district and g.get("district") and g.get("district") != district:
+        # Strictly require same district to avoid false cross-district duplicate alerts
+        if effective_district and g.get("district") and g.get("district") != effective_district:
             continue
         g_text = f"{g.get('subject', '')} {g.get('description', '')} {g.get('ai_summary', '')}"
         g_tokens = _tokenize(g_text)
         overlap = desc_tokens & g_tokens
-        # Require substantial specific overlap (e.g. 4+ unique tokens or 30%+ Jaccard similarity)
-        if len(overlap) >= 4 or (
-            len(overlap) >= 3 and len(overlap) / max(len(desc_tokens | g_tokens), 1) >= 0.25
-        ):
+        # Require genuine location/name overlap (at least 3 distinctive proper nouns/location tokens)
+        if len(overlap) >= 3 and len(overlap) / max(len(desc_tokens | g_tokens), 1) >= 0.2:
             scored.append((len(overlap), g))
     scored.sort(key=lambda x: x[0], reverse=True)
     return [
@@ -107,11 +148,14 @@ async def analyze_grievance(
     district: Optional[str] = None,
     recent_grievances: Optional[List[dict]] = None,
 ) -> dict:
+    effective_district = district or _detect_district(description)
     recent = recent_grievances or []
-    if district:
-        recent = [g for g in recent if not g.get("district") or g.get("district") == district]
+    if effective_district:
+        recent = [g for g in recent if not g.get("district") or g.get("district") == effective_district]
 
-    keyword_candidates = _find_keyword_duplicates(description, recent, district=district)
+    keyword_candidates = _find_keyword_duplicates(
+        description, recent, district=effective_district
+    )
     recent_by_ref = {g["reference_id"]: g for g in recent if "reference_id" in g}
 
     recent_context = ""
@@ -165,6 +209,7 @@ async def analyze_grievance(
 
         merged_candidates = []
         seen_refs = set()
+        is_llm_flagged = bool(parsed.get("is_duplicate_risk", False))
         for ref_id in parsed.get("duplicate_ref_ids") or []:
             if ref_id in recent_by_ref and ref_id not in seen_refs:
                 g = recent_by_ref[ref_id]
@@ -176,12 +221,15 @@ async def analyze_grievance(
                     }
                 )
                 seen_refs.add(ref_id)
+
+        # Only add keyword candidates if they were verified in the same district
         for c in keyword_candidates:
             if c["reference_id"] not in seen_refs:
                 merged_candidates.append(c)
                 seen_refs.add(c["reference_id"])
 
-        is_dup = bool(parsed.get("is_duplicate_risk", False)) or len(merged_candidates) > 0
+        # True duplicate risk requires either LLM confirmation or confirmed same-district overlap
+        is_dup = len(merged_candidates) > 0 and (is_llm_flagged or bool(effective_district))
 
         return {
             "department": dept,
