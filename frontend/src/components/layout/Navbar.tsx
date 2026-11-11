@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Menu, X, Landmark, LayoutDashboard, LogOut, User } from 'lucide-react';
+import { Menu, X, Landmark, LayoutDashboard, LogOut, User, Home, ChevronDown } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { clearAuth, getUser } from '../../lib/auth';
 
@@ -15,19 +15,32 @@ const navLinks = [
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [userDropdownOpen, setUserDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
   const navigate = useNavigate();
   const user = getUser();
 
-  const path = location.pathname;
-  // Hide duplicate Dashboard & Logout buttons when inside dashboard/portal routes or tracking pages
-  const hideDashboardActions =
-    path.startsWith('/citizen') ||
-    path.startsWith('/cmo') ||
-    path.startsWith('/officer') ||
-    path.includes('/dashboard') ||
-    path.includes('/submit') ||
-    path.includes('/track');
+  // Close dropdown on outside click
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setUserDropdownOpen(false);
+      }
+    }
+    if (userDropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [userDropdownOpen]);
+
+  // Close dropdown on navigation
+  useEffect(() => {
+    setUserDropdownOpen(false);
+    setMenuOpen(false);
+  }, [location.pathname]);
 
   const dashboardLink =
     user?.role === 'CMO_ADMIN'
@@ -76,35 +89,67 @@ export default function Navbar() {
           </div>
 
           {/* Right side */}
-          <div className="hidden md:flex items-center gap-3">
+          <div className="hidden md:flex items-center gap-2">
             {user ? (
-              <div className="flex items-center gap-3">
-                {/* Minimalist distinguished user identity */}
-                <div className="flex items-center gap-1.5 select-none text-white">
+              <div className="relative" ref={dropdownRef}>
+                <button
+                  type="button"
+                  onClick={() => setUserDropdownOpen(!userDropdownOpen)}
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-white hover:bg-[#2d7a52] transition-colors cursor-pointer select-none"
+                  aria-expanded={userDropdownOpen}
+                >
                   <User className="w-4 h-4 text-[#f4d068] shrink-0" />
-                  <span className="text-sm font-medium text-white max-w-[140px] truncate">
+                  <span className="text-sm font-medium text-white max-w-[150px] truncate">
                     {user.name}
                   </span>
-                </div>
-                {!hideDashboardActions && (
-                  <>
-                    <Link
-                      to={dashboardLink}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-[#c9a227] hover:bg-[#e5c060] text-emerald-950 rounded-lg transition-colors"
-                    >
-                      <LayoutDashboard className="w-3.5 h-3.5" />
-                      <span>Dashboard</span>
-                    </Link>
-                    <button
-                      type="button"
-                      onClick={handleLogout}
-                      className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium text-emerald-100 hover:text-white hover:bg-white/10 rounded-lg transition-colors cursor-pointer border border-white/20"
-                      title="Logout"
-                    >
-                      <LogOut className="w-3.5 h-3.5" />
-                      <span>Logout</span>
-                    </button>
-                  </>
+                  <ChevronDown
+                    className={`w-3.5 h-3.5 text-emerald-200 transition-transform duration-200 ${
+                      userDropdownOpen ? 'rotate-180' : ''
+                    }`}
+                  />
+                </button>
+
+                {/* Profile Dropdown */}
+                {userDropdownOpen && (
+                  <div className="absolute right-0 mt-2 w-52 rounded-xl bg-white shadow-xl ring-1 ring-black/10 py-1.5 z-50 text-gray-800">
+                    <div className="px-3.5 py-2 border-b border-gray-100">
+                      <div className="text-xs font-semibold text-gray-900 truncate">{user.name}</div>
+                      <div className="text-[11px] text-gray-500 truncate">{user.email}</div>
+                    </div>
+
+                    <div className="py-1">
+                      <Link
+                        to={dashboardLink}
+                        onClick={() => setUserDropdownOpen(false)}
+                        className="flex items-center gap-2.5 px-3.5 py-2 text-xs font-medium text-gray-700 hover:bg-emerald-50 hover:text-emerald-900 transition-colors"
+                      >
+                        <LayoutDashboard className="w-4 h-4 text-emerald-700" />
+                        <span>Dashboard</span>
+                      </Link>
+                      <Link
+                        to="/"
+                        onClick={() => setUserDropdownOpen(false)}
+                        className="flex items-center gap-2.5 px-3.5 py-2 text-xs font-medium text-gray-700 hover:bg-emerald-50 hover:text-emerald-900 transition-colors"
+                      >
+                        <Home className="w-4 h-4 text-emerald-700" />
+                        <span>Home</span>
+                      </Link>
+                    </div>
+
+                    <div className="border-t border-gray-100 pt-1">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setUserDropdownOpen(false);
+                          handleLogout();
+                        }}
+                        className="w-full flex items-center gap-2.5 px-3.5 py-2 text-xs font-medium text-rose-600 hover:bg-rose-50 hover:text-rose-700 transition-colors cursor-pointer text-left"
+                      >
+                        <LogOut className="w-4 h-4 text-rose-500" />
+                        <span>Logout</span>
+                      </button>
+                    </div>
+                  </div>
                 )}
               </div>
             ) : (
@@ -169,34 +214,43 @@ export default function Navbar() {
             </Link>
           ))}
           {user ? (
-            <div className="pt-2 border-t border-white/10 space-y-2 mt-2">
-              <div className="flex items-center gap-2 px-3 py-1.5 text-white">
+            <div className="pt-2 border-t border-white/10 space-y-1 mt-2">
+              <div className="flex items-center gap-2.5 px-3 py-2 text-white">
                 <User className="w-4 h-4 text-[#f4d068] shrink-0" />
-                <span className="text-sm font-medium">{user.name}</span>
-              </div>
-              {!hideDashboardActions && (
-                <div className="grid grid-cols-2 gap-2 px-1">
-                  <Link
-                    to={dashboardLink}
-                    onClick={() => setMenuOpen(false)}
-                    className="flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-semibold bg-[#c9a227] hover:bg-[#e5c060] text-emerald-950 rounded-lg transition-colors shadow-2xs"
-                  >
-                    <LayoutDashboard className="w-3.5 h-3.5" />
-                    <span>Dashboard</span>
-                  </Link>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setMenuOpen(false);
-                      handleLogout();
-                    }}
-                    className="flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-medium text-rose-200 bg-rose-950/40 border border-rose-500/30 hover:bg-rose-900/60 rounded-lg transition-colors cursor-pointer"
-                  >
-                    <LogOut className="w-3.5 h-3.5" />
-                    <span>Logout</span>
-                  </button>
+                <div className="flex flex-col">
+                  <span className="text-sm font-semibold">{user.name}</span>
+                  <span className="text-[11px] text-emerald-200">{user.email}</span>
                 </div>
-              )}
+              </div>
+              <div className="space-y-1 px-1 pt-1">
+                <Link
+                  to={dashboardLink}
+                  onClick={() => setMenuOpen(false)}
+                  className="flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-emerald-100 hover:bg-[#2d7a52] rounded-lg transition-colors"
+                >
+                  <LayoutDashboard className="w-4 h-4 text-[#f4d068]" />
+                  <span>Dashboard</span>
+                </Link>
+                <Link
+                  to="/"
+                  onClick={() => setMenuOpen(false)}
+                  className="flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-emerald-100 hover:bg-[#2d7a52] rounded-lg transition-colors"
+                >
+                  <Home className="w-4 h-4 text-[#f4d068]" />
+                  <span>Home</span>
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMenuOpen(false);
+                    handleLogout();
+                  }}
+                  className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-rose-200 hover:bg-rose-950/40 rounded-lg transition-colors cursor-pointer"
+                >
+                  <LogOut className="w-4 h-4 text-rose-400" />
+                  <span>Logout</span>
+                </button>
+              </div>
             </div>
           ) : (
             <div className="pt-2 border-t border-white/10 space-y-1.5">
