@@ -33,7 +33,7 @@ const faqs = [
   },
   {
     q: 'Can I provide feedback after my grievance is resolved?',
-    a: 'Yes! Once your grievance status becomes RESOLVED, you can rate the redressal experience (1 to 5 stars) and share comments from your Citizen Dashboard or Track Grievance view.',
+    a: 'Yes! Once your grievance status becomes RESOLVED, you can rate the resolution experience (1 to 5 stars) and share comments from your Citizen Dashboard or Track Grievance view.',
   },
   {
     q: 'Is my personal contact information kept secure?',

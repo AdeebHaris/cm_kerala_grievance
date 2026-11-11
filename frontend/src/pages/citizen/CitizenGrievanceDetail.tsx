@@ -287,7 +287,7 @@ export default function CitizenGrievanceDetail() {
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                      Rate Redressal Quality
+                      Rate Resolution Quality
                     </label>
                     <div className="flex items-center gap-1.5">
                       {[1, 2, 3, 4, 5].map((star) => (

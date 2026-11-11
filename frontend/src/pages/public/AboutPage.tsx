@@ -30,7 +30,7 @@ export default function AboutPage() {
             </div>
             <h2 className="text-xl font-bold text-gray-900 mb-2">Our Mission</h2>
             <p className="text-gray-600 leading-relaxed">
-              To ensure timely, fair, and citizen-centric redressal of public grievances by eliminating bureaucratic delays and empowering state departments with real-time tracking and intelligent triage.
+              To ensure timely, fair, and citizen-centric resolution of public grievances by eliminating bureaucratic delays and empowering state departments with real-time tracking and intelligent triage.
             </p>
           </div>
 

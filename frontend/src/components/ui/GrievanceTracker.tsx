@@ -231,7 +231,7 @@ export default function GrievanceTracker({
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
               <h3 className="text-lg font-bold text-gray-900 mb-2">Citizen Satisfaction Feedback</h3>
               <p className="text-sm text-gray-600 mb-4">
-                Your grievance has been resolved. Please rate your experience with the redressal process.
+                Your grievance has been resolved. Please rate your experience with the resolution process.
               </p>
 
               <div className="space-y-4">

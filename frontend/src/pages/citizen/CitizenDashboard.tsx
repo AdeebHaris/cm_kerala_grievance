@@ -46,7 +46,7 @@ export default function CitizenDashboard() {
   return (
     <DashboardLayout
       title={`Welcome, ${user?.name || 'Citizen'}`}
-      subtitle="Manage your submitted grievances and track redressal progress"
+      subtitle="Manage your submitted grievances and track resolution progress"
       links={citizenSidebarLinks}
     >
       <div className="space-y-6">

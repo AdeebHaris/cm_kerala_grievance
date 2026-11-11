@@ -29,7 +29,7 @@ export default function Footer() {
 
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-xs text-[#e5c060]">
               <ShieldCheck className="w-4 h-4 text-[#c9a227]" />
-              <span>Government of Keralam • Citizen Redressal</span>
+              <span>Government of Keralam • Citizen Grievance Resolution</span>
             </div>
           </div>
 

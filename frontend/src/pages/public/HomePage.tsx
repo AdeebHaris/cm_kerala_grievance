@@ -6,7 +6,6 @@ import {
   CheckCircle2,
   Clock,
   Building2,
-  ClipboardCheck,
   UserCheck,
   ShieldCheck,
   ArrowRight,
@@ -18,38 +17,6 @@ import api from '../../lib/api';
 import type { PublicStats, Department } from '../../types';
 import { getDepartmentIcon } from '../../lib/departmentIcons';
 
-const howItWorksSteps = [
-  {
-    step: '01',
-    title: 'Submit',
-    desc: 'Register and lodge your grievance with AI-assisted categorization.',
-    icon: FileText,
-  },
-  {
-    step: '02',
-    title: 'CMO Review',
-    desc: 'Chief Minister’s Office verifies urgency and priority.',
-    icon: ClipboardCheck,
-  },
-  {
-    step: '03',
-    title: 'Department Assigned',
-    desc: 'Forwarded directly to the concerned state department.',
-    icon: Building2,
-  },
-  {
-    step: '04',
-    title: 'Investigation',
-    desc: 'Department officer inspects the issue and records findings.',
-    icon: UserCheck,
-  },
-  {
-    step: '05',
-    title: 'Resolution',
-    desc: 'Official action taken and citizen feedback collected.',
-    icon: CheckCircle2,
-  },
-];
 
 const fallbackDepartments: Department[] = [
   {
@@ -131,7 +98,7 @@ export default function HomePage() {
           <div className="lg:col-span-7 space-y-6 z-10">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 border border-[#c9a227]/40 text-[#e5c060] text-xs font-semibold tracking-wide uppercase">
               <ShieldCheck className="w-4 h-4" />
-              Government of Keralam • Citizen Redressal System
+              Government of Keralam • Citizen Grievance Resolution
             </div>
 
             <h1 className="text-3xl sm:text-5xl font-extrabold leading-tight">
@@ -170,7 +137,7 @@ export default function HomePage() {
                   <span className="text-xs uppercase tracking-wider text-[#e5c060] font-semibold">
                     Government Secretariat
                   </span>
-                  <h2 className="text-lg font-bold text-white">Public Redressal Cell</h2>
+                  <h2 className="text-lg font-bold text-white">Public Grievance Cell</h2>
                 </div>
                 <Landmark className="w-7 h-7 text-[#f4d068] shrink-0" />
               </div>
@@ -209,7 +176,7 @@ export default function HomePage() {
                       <ShieldCheck className="w-3.5 h-3.5" /> 14 Districts Connected
                     </div>
                     <p className="text-green-100 mt-1">
-                      Unified redressal across all revenue districts and departments.
+                      Unified issue resolution across all revenue districts and departments.
                     </p>
                   </div>
                 </div>
@@ -227,7 +194,7 @@ export default function HomePage() {
             <div className="flex items-center gap-2">
               <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
               <span className="text-xs font-bold uppercase tracking-wider text-slate-800">
-                State-Wide Portal Redressal Metrics
+                State-Wide Grievance Resolution Metrics
               </span>
               <span className="text-[11px] text-slate-500 hidden md:inline">
                 • Cumulative public statistics across all 14 Keralam districts
@@ -250,14 +217,14 @@ export default function HomePage() {
               },
               {
                 label: 'State-Wide Resolved',
-                description: 'Successfully redressed',
+                description: 'Successfully resolved',
                 value: resolvedGrievances.toLocaleString(),
                 icon: CheckCircle2,
                 accent: 'border-teal-600 text-teal-700',
                 iconBg: 'bg-teal-50 text-teal-700',
               },
               {
-                label: 'Active In Redressal',
+                label: 'Active In Resolution',
                 description: 'Under departmental action',
                 value: pendingGrievances.toLocaleString(),
                 icon: Clock,
@@ -300,50 +267,49 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* How It Works Section */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="text-center max-w-2xl mx-auto mb-12">
-          <span className="text-xs font-bold uppercase tracking-widest text-[#c9a227]">
-            Transparent Workflow
-          </span>
-          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mt-2">
-            How Grievance Redressal Works
-          </h2>
-          <p className="text-gray-600 mt-2">
-            From submission to final resolution, every step is logged and traceable with your unique reference ID.
-          </p>
-        </div>
+      {/* Streamlined Minimal Workflow Preview */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="bg-gradient-to-br from-slate-900 via-[#0f3d25] to-[#1a5c38] rounded-3xl p-6 sm:p-10 text-white shadow-xl flex flex-col lg:flex-row items-center justify-between gap-8 border border-white/10">
+          <div className="space-y-3 max-w-xl">
+            <span className="text-xs font-bold uppercase tracking-wider text-[#e5c060] bg-[#e5c060]/15 px-3 py-1 rounded-full border border-[#e5c060]/30 inline-block">
+              Transparent Resolution Process
+            </span>
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+              How Your Grievance Gets Solved
+            </h2>
+            <p className="text-sm text-green-100/90 leading-relaxed">
+              Every citizen petition follows an accountable 3-stage lifecycle: AI-assisted submission, direct oversight by the Chief Minister's Office, and on-the-ground action by designated department officers.
+            </p>
+            <div className="flex flex-wrap items-center gap-2.5 pt-2 text-xs font-medium text-emerald-200">
+              <span className="flex items-center gap-1.5 bg-white/10 px-3 py-1.5 rounded-lg border border-white/10">
+                <CheckCircle2 className="w-3.5 h-3.5 text-[#e5c060]" /> 1. Lodge Complaint
+              </span>
+              <span>→</span>
+              <span className="flex items-center gap-1.5 bg-white/10 px-3 py-1.5 rounded-lg border border-white/10">
+                <Building2 className="w-3.5 h-3.5 text-[#e5c060]" /> 2. CMO Review
+              </span>
+              <span>→</span>
+              <span className="flex items-center gap-1.5 bg-white/10 px-3 py-1.5 rounded-lg border border-white/10">
+                <UserCheck className="w-3.5 h-3.5 text-[#e5c060]" /> 3. Department Action
+              </span>
+            </div>
+          </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
-          {howItWorksSteps.map((item) => {
-            const Icon = item.icon;
-            return (
-              <div
-                key={item.step}
-                className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow relative"
-              >
-                <div className="flex items-center justify-between mb-4">
-                  <div className="w-11 h-11 rounded-lg bg-green-50 text-[#1a5c38] flex items-center justify-center">
-                    <Icon className="w-6 h-6" />
-                  </div>
-                  <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-[#c9a227]/15 text-[#9a7813]">
-                    Step {item.step}
-                  </span>
-                </div>
-                <h3 className="font-bold text-gray-900 mb-1.5">{item.title}</h3>
-                <p className="text-sm text-gray-600 leading-relaxed">{item.desc}</p>
-              </div>
-            );
-          })}
-        </div>
-
-        <div className="text-center mt-8">
-          <Link
-            to="/how-it-works"
-            className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#1a5c38] hover:text-[#2d7a52]"
-          >
-            View detailed process <ArrowRight className="w-4 h-4" />
-          </Link>
+          <div className="flex flex-col sm:flex-row lg:flex-col gap-3 w-full lg:w-auto shrink-0">
+            <Link
+              to="/how-it-works"
+              className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-[#c9a227] hover:bg-[#e5c060] text-emerald-950 font-bold text-sm transition-all shadow-md"
+            >
+              <span>Explore Detailed Workflow Guide</span>
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+            <Link
+              to={submitTarget}
+              className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white font-semibold text-sm transition-all"
+            >
+              <span>Submit a Grievance Now</span>
+            </Link>
+          </div>
         </div>
       </section>
 
@@ -419,7 +385,7 @@ export default function HomePage() {
             <div>
               <h3 className="font-bold text-[#e5c060]">Need Assistance with Your Grievance?</h3>
               <p className="text-sm text-green-100 mt-1">
-                You can track ongoing redressal status anytime using your Reference ID or reach out to our dedicated support desk.
+                You can track ongoing grievance status anytime using your Reference ID or reach out to our dedicated support desk.
               </p>
             </div>
           </div>
