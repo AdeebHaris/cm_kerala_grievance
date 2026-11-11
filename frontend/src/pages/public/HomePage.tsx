@@ -9,7 +9,6 @@ import {
   ClipboardCheck,
   UserCheck,
   ShieldCheck,
-  Sparkles,
   Wrench,
   HeartPulse,
   GraduationCap,
@@ -169,25 +168,27 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* Styled Kerala Map Graphic */}
+          {/* Kerala State Grid Visual Card */}
           <div className="lg:col-span-5 flex justify-center z-10">
             <div className="relative w-full max-w-sm bg-white/10 backdrop-blur-sm border border-[#c9a227]/40 rounded-2xl p-6 shadow-2xl">
-              <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center justify-between mb-4 pb-3 border-b border-white/15">
                 <div>
                   <span className="text-xs uppercase tracking-wider text-[#e5c060] font-semibold">
-                    14 Districts Connected
+                    Government Secretariat
                   </span>
-                  <h2 className="text-lg font-bold text-white">Kerala State Grid</h2>
+                  <h2 className="text-lg font-bold text-white">Public Redressal Cell</h2>
                 </div>
-                <span className="text-2xl">🌴</span>
+                <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center border border-[#c9a227]/50 text-xl shadow-inner">
+                  🏛️
+                </div>
               </div>
 
-              {/* Stylized Kerala Map Visual */}
-              <div className="bg-[#0f3d25]/70 rounded-xl p-5 border border-green-400/20 flex items-center gap-5">
+              {/* Stylized Kerala Map Visual & Key Highlights */}
+              <div className="bg-[#0f3d25]/80 rounded-xl p-5 border border-green-400/20 flex items-center gap-5">
                 <svg
                   viewBox="0 0 120 260"
                   className="w-24 h-52 shrink-0 drop-shadow-md"
-                  aria-label="Stylized map of Kerala"
+                  aria-label="Map of Kerala"
                 >
                   <path
                     d="M35,10 C48,8 62,18 68,35 C74,52 66,68 78,86 C90,104 96,120 88,142 C82,158 92,175 84,195 C78,212 85,232 72,248 C62,256 50,245 45,228 C38,208 32,186 28,162 C24,138 18,112 22,86 C26,60 20,30 35,10 Z"
@@ -203,18 +204,20 @@ export default function HomePage() {
                 </svg>
 
                 <div className="space-y-3 text-xs">
-                  <div className="bg-white/10 rounded-lg p-2.5">
+                  <div className="bg-white/10 rounded-lg p-2.5 border border-white/10">
                     <div className="text-[#e5c060] font-semibold flex items-center gap-1.5">
-                      <Sparkles className="w-3.5 h-3.5" /> AI Smart Routing
+                      <Building2 className="w-3.5 h-3.5" /> CMO Direct Review
                     </div>
                     <p className="text-green-100 mt-1">
-                      Instant department & priority detection for faster response.
+                      Direct supervision & tracking from the Chief Minister's Office.
                     </p>
                   </div>
-                  <div className="bg-white/10 rounded-lg p-2.5">
-                    <div className="text-[#e5c060] font-semibold">Direct CMO Oversight</div>
+                  <div className="bg-white/10 rounded-lg p-2.5 border border-white/10">
+                    <div className="text-[#e5c060] font-semibold flex items-center gap-1.5">
+                      <ShieldCheck className="w-3.5 h-3.5" /> 14 Districts Connected
+                    </div>
                     <p className="text-green-100 mt-1">
-                      Kasaragod to Thiruvananthapuram under unified monitoring.
+                      Unified redressal across all revenue districts and departments.
                     </p>
                   </div>
                 </div>
