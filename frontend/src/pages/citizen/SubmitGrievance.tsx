@@ -15,7 +15,6 @@ import {
   FileText,
   Trash2,
   Clock,
-  Lock,
   Bot,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -738,17 +737,11 @@ export default function SubmitGrievance() {
               </div>
 
               <div>
-                <div className="flex items-center justify-between mb-1">
-                  <label className="block text-sm font-medium text-gray-700">
-                    Priority (AI Evaluated) *
-                  </label>
-                  <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-gray-500 bg-gray-100 px-2 py-0.5 rounded">
-                    <Lock className="w-3 h-3 text-gray-400" />
-                    Locked by AI
-                  </span>
-                </div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Priority *
+                </label>
 
-                {/* Locked Priority Field (Set solely by AI) */}
+                {/* Priority Field (Set solely by AI) */}
                 <input
                   type="hidden"
                   {...register('priority', {
@@ -756,26 +749,17 @@ export default function SubmitGrievance() {
                   })}
                   value={priorityValue || ''}
                 />
-                <div className="relative">
-                  <input
-                    type="text"
-                    readOnly
-                    disabled
-                    value={
-                      priorityValue
-                        ? `${priorityValue} Priority`
-                        : 'Awaiting AI Analysis...'
-                    }
-                    placeholder="Pending AI Assessment..."
-                    className="w-full px-3.5 py-2.5 border border-gray-200 rounded-lg bg-gray-50 text-gray-800 text-sm font-bold cursor-not-allowed select-none pl-9"
-                  />
-                  <Lock className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
-                  {priorityValue && (
-                    <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                      <PriorityBadge priority={priorityValue} />
-                    </div>
-                  )}
-                </div>
+                <input
+                  type="text"
+                  readOnly
+                  disabled
+                  value={
+                    priorityValue
+                      ? `${priorityValue} Priority`
+                      : 'Pending AI Analysis...'
+                  }
+                  className="w-full px-3.5 py-2.5 border border-gray-300 rounded-lg bg-gray-50 text-gray-800 text-sm font-semibold cursor-not-allowed select-none"
+                />
 
                 {/* Clear Explanatory Notice Near the Field */}
                 <div className="mt-2 rounded-lg border border-emerald-200/90 bg-emerald-50/70 p-2.5 text-xs text-emerald-950 space-y-1 shadow-2xs">
