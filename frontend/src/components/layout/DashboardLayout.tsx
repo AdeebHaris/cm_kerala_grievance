@@ -35,16 +35,18 @@ export default function DashboardLayout({ title, subtitle, links, children }: Da
       ? 'CMO Administrator'
       : user?.role === 'OFFICER'
       ? 'Department Officer'
-      : 'Citizen Portal';
+      : null;
 
   const sidebarContent = (
     <div className="flex flex-col h-full">
       <div className="p-5 border-b border-green-800/40">
-        <div className="text-xs uppercase tracking-wider text-[#e5c060] font-semibold">
-          {roleLabel}
-        </div>
-        <div className="mt-1 font-bold text-white truncate">{user?.name || 'User'}</div>
-        <div className="text-xs text-green-200 truncate">{user?.email}</div>
+        {roleLabel && (
+          <div className="text-xs uppercase tracking-wider text-[#e5c060] font-semibold mb-1">
+            {roleLabel}
+          </div>
+        )}
+        <div className="font-bold text-white truncate">{user?.name || 'User'}</div>
+        <div className="text-xs text-green-200 truncate mt-0.5">{user?.email}</div>
       </div>
 
       <nav className="flex-1 p-3 space-y-1">
@@ -71,16 +73,17 @@ export default function DashboardLayout({ title, subtitle, links, children }: Da
       <div className="p-3 border-t border-green-800/40 space-y-1">
         <Link
           to="/"
-          className="group flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-emerald-100 hover:text-[#f4d068] hover:bg-white/10 transition-all duration-200 cursor-pointer"
+          className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-emerald-100 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
         >
-          <Home className="w-4 h-4 text-emerald-300 group-hover:text-[#f4d068] group-hover:scale-110 transition-all duration-200" />
-          <span>Public Portal</span>
+          <Home className="w-4 h-4 text-emerald-300" />
+          <span>Home</span>
         </Link>
         <button
+          type="button"
           onClick={handleLogout}
-          className="group w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-rose-300 hover:text-white hover:bg-rose-600/20 border border-transparent hover:border-rose-500/40 transition-all duration-200 cursor-pointer"
+          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-rose-300 hover:text-white hover:bg-rose-600/20 border border-transparent hover:border-rose-500/40 transition-colors cursor-pointer"
         >
-          <LogOut className="w-4 h-4 text-rose-300 group-hover:text-rose-200 group-hover:translate-x-0.5 transition-all duration-200" />
+          <LogOut className="w-4 h-4 text-rose-300" />
           <span>Logout</span>
         </button>
       </div>
