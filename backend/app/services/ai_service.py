@@ -186,8 +186,9 @@ async def analyze_grievance(
                     "content": (
                         f'Analyze this grievance: "{description}"{recent_context}\n'
                         'Return ONLY valid JSON: {"department":"<exact department name>",'
-                        '"category":"<short category>","priority":"LOW|MEDIUM|HIGH",'
-                        '"summary":"<max 100 chars>","is_duplicate_risk":false,"duplicate_ref_ids":[]}'
+                        '"category":"<short category>","subject":"<concise informative grievance title, max 80 chars>",'
+                        '"priority":"LOW|MEDIUM|HIGH","summary":"<max 100 chars>",'
+                        '"is_duplicate_risk":false,"duplicate_ref_ids":[]}'
                     ),
                 },
             ],
@@ -206,6 +207,11 @@ async def analyze_grievance(
             priority = "MEDIUM"
 
         dept = _normalize_department(str(parsed.get("department", "")))
+
+        suggested_subject = str(parsed.get("subject") or parsed.get("title") or "").strip()
+        if not suggested_subject:
+            first_sentence = description.split(".")[0].strip()
+            suggested_subject = first_sentence[:80] if len(first_sentence) > 5 else description[:80].strip()
 
         merged_candidates = []
         seen_refs = set()
@@ -234,6 +240,7 @@ async def analyze_grievance(
         return {
             "department": dept,
             "category": str(parsed.get("category", "General"))[:100],
+            "subject": suggested_subject[:120],
             "priority": priority,
             "summary": str(parsed.get("summary", description[:100]))[:100],
             "is_duplicate_risk": is_dup,
@@ -242,12 +249,15 @@ async def analyze_grievance(
             "is_fallback": False,
         }
     except Exception as e:
+        first_sentence = description.split(".")[0].strip()
+        fallback_subject = first_sentence[:80] if len(first_sentence) > 5 else description[:80].strip()
         return {
             "department": "Public Works Department",
             "category": "General",
+            "subject": fallback_subject,
             "priority": "MEDIUM",
             "summary": description[:100],
-            "is_duplicate_risk": len(keyword_candidates) > 0,
+            "is_duplicate_risk": len(keyword_candidates) > 0 and bool(effective_district),
             "duplicate_candidates": keyword_candidates,
             "model_used": MODEL_NAME,
             "is_fallback": True,

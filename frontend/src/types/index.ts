@@ -92,6 +92,7 @@ export interface DuplicateCandidate {
 export interface AIAnalysisResult {
   department: string;
   category: string;
+  subject?: string;
   priority: 'LOW' | 'MEDIUM' | 'HIGH';
   summary: string;
   is_duplicate_risk: boolean;

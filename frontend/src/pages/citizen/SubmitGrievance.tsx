@@ -11,6 +11,9 @@ import {
   Copy,
   Check,
   Bot,
+  Building2,
+  Tag,
+  FileText,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import DashboardLayout from '../../components/layout/DashboardLayout';
@@ -137,7 +140,10 @@ export default function SubmitGrievance() {
     if (aiResult.priority) {
       setValue('priority', aiResult.priority, { shouldValidate: true });
     }
-    toast.success('AI suggestions applied! You can still edit any field.');
+    if (aiResult.subject) {
+      setValue('subject', aiResult.subject, { shouldValidate: true });
+    }
+    toast.success('AI suggestions (Subject, Category, Priority) applied to form!');
   };
 
   const copyRefId = () => {
@@ -350,96 +356,144 @@ export default function SubmitGrievance() {
             </button>
 
             {aiResult && (
-              <div className="rounded-xl border-2 border-[#c9a227] bg-amber-50/70 p-4 space-y-3">
-                <div className="flex items-center justify-between gap-2 flex-wrap">
-                  <span className="font-bold text-sm text-gray-900">
-                    🤖 AI Suggestion (Review before submitting)
-                  </span>
+              <div className="rounded-2xl border border-slate-200/90 bg-gradient-to-b from-slate-50/90 via-white to-emerald-50/30 shadow-sm p-5 space-y-4">
+                {/* Header Badge */}
+                <div className="flex items-center justify-between gap-2 border-b border-slate-100 pb-3">
+                  <div className="flex items-center gap-2">
+                    <div className="w-7 h-7 rounded-lg bg-[#1a5c38]/10 text-[#1a5c38] flex items-center justify-center">
+                      <Sparkles className="w-4 h-4 text-[#1a5c38]" />
+                    </div>
+                    <div>
+                      <span className="font-bold text-xs uppercase tracking-wider text-gray-800">
+                        AI Triage Recommendation
+                      </span>
+                      <p className="text-[10px] text-gray-400">Review & apply to your grievance</p>
+                    </div>
+                  </div>
                   <span
-                    className={`text-[11px] font-semibold px-2 py-0.5 rounded-full ${
+                    className={`text-[10px] font-semibold px-2.5 py-0.5 rounded-full ${
                       aiResult.is_fallback
-                        ? 'bg-orange-100 text-orange-800'
-                        : 'bg-green-100 text-green-800'
+                        ? 'bg-amber-100/80 text-amber-900 border border-amber-200'
+                        : 'bg-emerald-100/70 text-[#0f3d25] border border-emerald-200/80'
                     }`}
                   >
-                    {aiResult.is_fallback
-                      ? 'Fallback Classifier'
-                      : `AI (${aiResult.model_used || 'openai/gpt-oss-120b'})`}
+                    {aiResult.is_fallback ? 'Rule Fallback' : 'Groq AI · Triage'}
                   </span>
                 </div>
 
                 {aiResult.is_fallback && aiResult.fallback_reason && (
-                  <p className="text-xs text-orange-700 bg-orange-50 rounded p-2">
+                  <p className="text-xs text-amber-800 bg-amber-50 rounded-lg p-2.5 border border-amber-200/60">
                     Note: {aiResult.fallback_reason}
                   </p>
                 )}
 
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between gap-2">
-                    <span className="text-gray-600">Suggested Department:</span>
-                    <span className="font-semibold text-gray-900 text-right">
-                      {aiResult.department}
-                    </span>
-                  </div>
-                  <div className="flex justify-between gap-2">
-                    <span className="text-gray-600">Category:</span>
-                    <span className="font-semibold text-gray-900 text-right">
-                      {aiResult.category}
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center gap-2">
-                    <span className="text-gray-600">Priority:</span>
-                    <PriorityBadge priority={aiResult.priority} />
-                  </div>
-                  <div className="pt-2 border-t border-amber-200/70 space-y-1.5">
+                {/* Suggested Title / Subject */}
+                {aiResult.subject && (
+                  <div className="rounded-xl border border-slate-200/90 bg-white p-3 space-y-1 shadow-2xs">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-semibold text-gray-700">
-                        AI Summary of your issue:
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
+                        <FileText className="w-3.5 h-3.5 text-[#1a5c38]" /> Suggested Subject
                       </span>
                       <button
                         type="button"
-                        onClick={() => setIsEditingSummary(!isEditingSummary)}
+                        onClick={() => {
+                          setValue('subject', aiResult.subject || '', { shouldValidate: true });
+                          toast.success('Suggested subject applied to form!');
+                        }}
                         className="text-[11px] font-semibold text-[#1a5c38] hover:text-[#2d7a52] hover:underline"
                       >
-                        {isEditingSummary ? '✓ Done' : '✎ Edit summary'}
+                        Use this title
                       </button>
                     </div>
-
-                    {isEditingSummary ? (
-                      <div className="space-y-1">
-                        <textarea
-                          rows={2}
-                          value={customSummary}
-                          onChange={(e) => setCustomSummary(e.target.value)}
-                          placeholder="Type your own summary..."
-                          maxLength={120}
-                          className="w-full text-xs p-2 border border-amber-300 rounded-lg bg-white focus:outline-none focus:ring-1 focus:ring-[#1a5c38]"
-                        />
-                        <div className="flex justify-between items-center text-[10px] text-gray-500">
-                          <span>Keep it brief for quick officer review</span>
-                          <span>{customSummary.length}/120</span>
-                        </div>
-                      </div>
-                    ) : (
-                      <p className="text-xs text-gray-800 bg-amber-100/60 p-2.5 rounded-lg border border-amber-200/80 font-medium leading-relaxed">
-                        {customSummary || aiResult.summary}
-                      </p>
-                    )}
-                    <p className="text-[10px] text-gray-500">
-                      Officers review this summary first. You can edit it if you want to emphasize specific details.
+                    <p className="text-xs font-semibold text-gray-900 leading-snug">
+                      {aiResult.subject}
                     </p>
+                  </div>
+                )}
+
+                {/* Metrics 2-column tiles */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                  {/* Department */}
+                  <div className="rounded-xl border border-slate-200/80 bg-white p-3 space-y-1 shadow-2xs">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+                      <Building2 className="w-3 h-3 text-[#1a5c38]" /> Department
+                    </span>
+                    <p className="text-xs font-bold text-gray-900 leading-snug">
+                      {aiResult.department}
+                    </p>
+                  </div>
+
+                  {/* Priority */}
+                  <div className="rounded-xl border border-slate-200/80 bg-white p-3 space-y-1 shadow-2xs">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                      Assessed Priority
+                    </span>
+                    <div className="pt-0.5">
+                      <PriorityBadge priority={aiResult.priority} showFullLabel />
+                    </div>
                   </div>
                 </div>
 
+                {/* Category Row */}
+                <div className="flex items-center justify-between px-3 py-2 rounded-lg bg-slate-100/70 text-xs">
+                  <span className="text-gray-500 flex items-center gap-1.5 font-medium">
+                    <Tag className="w-3.5 h-3.5 text-gray-400" /> Category:
+                  </span>
+                  <span className="font-semibold text-gray-800">{aiResult.category}</span>
+                </div>
+
+                {/* AI Summary of your issue */}
+                <div className="rounded-xl border border-slate-200/90 bg-white p-3.5 space-y-2 shadow-2xs">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-gray-800 flex items-center gap-1.5">
+                      AI Summary of your issue:
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setIsEditingSummary(!isEditingSummary)}
+                      className="text-[11px] font-semibold text-[#1a5c38] hover:text-[#2d7a52] hover:underline"
+                    >
+                      {isEditingSummary ? '✓ Done' : '✎ Edit summary'}
+                    </button>
+                  </div>
+
+                  {isEditingSummary ? (
+                    <div className="space-y-1">
+                      <textarea
+                        rows={2}
+                        value={customSummary}
+                        onChange={(e) => setCustomSummary(e.target.value)}
+                        placeholder="Type your own summary..."
+                        maxLength={120}
+                        className="w-full text-xs p-2.5 border border-emerald-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-[#1a5c38]"
+                      />
+                      <div className="flex justify-between items-center text-[10px] text-gray-400">
+                        <span>Brief note for reviewing officers</span>
+                        <span>{customSummary.length}/120</span>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="border-l-2 border-[#1a5c38] pl-2.5 py-0.5">
+                      <p className="text-xs text-gray-700 leading-relaxed font-medium">
+                        "{customSummary || aiResult.summary}"
+                      </p>
+                    </div>
+                  )}
+                  <p className="text-[10px] text-gray-400">
+                    Officers review this summary first. You can edit it if you want to emphasize specific details.
+                  </p>
+                </div>
+
+                {/* Duplicate alert if present */}
                 {(aiResult.is_duplicate_risk ||
                   (aiResult.duplicate_candidates && aiResult.duplicate_candidates.length > 0)) && (
-                  <div className="bg-red-50 border border-red-200 rounded-lg p-3 space-y-1.5">
-                    <div className="flex items-center gap-1.5 text-xs font-bold text-red-800">
-                      <AlertTriangle className="w-4 h-4" />
+                  <div className="bg-rose-50/90 border border-rose-200 rounded-xl p-3.5 space-y-2">
+                    <div className="flex items-center gap-1.5 text-xs font-bold text-rose-800">
+                      <AlertTriangle className="w-4 h-4 text-rose-600" />
                       Potential Duplicate Grievance Alert
                     </div>
                     {aiResult.duplicate_candidates && aiResult.duplicate_candidates.length > 0 ? (
-                      <ul className="space-y-1 text-xs text-red-700">
+                      <ul className="space-y-1 text-xs text-rose-700">
                         {aiResult.duplicate_candidates.map((dup) => (
                           <li key={dup.reference_id}>
                             <span className="font-mono font-semibold">{dup.reference_id}</span>:{' '}
@@ -448,19 +502,21 @@ export default function SubmitGrievance() {
                         ))}
                       </ul>
                     ) : (
-                      <p className="text-xs text-red-700">
-                        A similar grievance may already exist in the system.
+                      <p className="text-xs text-rose-700">
+                        A similar grievance may already exist in this district.
                       </p>
                     )}
                   </div>
                 )}
 
+                {/* Apply All Button */}
                 <button
                   type="button"
                   onClick={applyAISuggestions}
-                  className="w-full py-2 px-3 rounded-lg bg-[#1a5c38] hover:bg-[#2d7a52] text-white text-xs font-semibold transition-colors"
+                  className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-[#1a5c38] hover:bg-[#25784c] text-white text-xs font-bold shadow-xs hover:shadow transition-all"
                 >
-                  Apply AI Suggestions to Form
+                  <Sparkles className="w-3.5 h-3.5 text-[#e5c060]" />
+                  Apply All Suggestions to Form
                 </button>
               </div>
             )}
