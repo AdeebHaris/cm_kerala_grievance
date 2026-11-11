@@ -60,3 +60,4 @@ export function getDepartmentIcon(code?: string, name?: string): LucideIcon {
 
   return Building2;
 }
+
