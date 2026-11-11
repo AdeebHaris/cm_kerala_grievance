@@ -6,7 +6,6 @@ import {
   CheckCircle2,
   Clock,
   Building2,
-  UserCheck,
   ShieldCheck,
   ArrowRight,
   Info,
@@ -267,47 +266,26 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Streamlined Minimal Workflow Preview */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="bg-gradient-to-br from-slate-900 via-[#0f3d25] to-[#1a5c38] rounded-3xl p-6 sm:p-10 text-white shadow-xl flex flex-col lg:flex-row items-center justify-between gap-8 border border-white/10">
-          <div className="space-y-3 max-w-xl">
-            <span className="text-xs font-bold uppercase tracking-wider text-[#e5c060] bg-[#e5c060]/15 px-3 py-1 rounded-full border border-[#e5c060]/30 inline-block">
-              Transparent Resolution Process
-            </span>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-              How Your Grievance Gets Solved
-            </h2>
-            <p className="text-sm text-green-100/90 leading-relaxed">
-              Every citizen petition follows an accountable 3-stage lifecycle: AI-assisted submission, direct oversight by the Chief Minister's Office, and on-the-ground action by designated department officers.
-            </p>
-            <div className="flex flex-wrap items-center gap-2.5 pt-2 text-xs font-medium text-emerald-200">
-              <span className="flex items-center gap-1.5 bg-white/10 px-3 py-1.5 rounded-lg border border-white/10">
-                <CheckCircle2 className="w-3.5 h-3.5 text-[#e5c060]" /> 1. Lodge Complaint
-              </span>
-              <span>→</span>
-              <span className="flex items-center gap-1.5 bg-white/10 px-3 py-1.5 rounded-lg border border-white/10">
-                <Building2 className="w-3.5 h-3.5 text-[#e5c060]" /> 2. CMO Review
-              </span>
-              <span>→</span>
-              <span className="flex items-center gap-1.5 bg-white/10 px-3 py-1.5 rounded-lg border border-white/10">
-                <UserCheck className="w-3.5 h-3.5 text-[#e5c060]" /> 3. Department Action
-              </span>
-            </div>
-          </div>
+      {/* Clean & Minimal Workflow Teaser Section */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
+        <div className="max-w-3xl mx-auto space-y-4">
+          <span className="text-xs font-bold uppercase tracking-widest text-[#1a5c38] bg-emerald-50 px-3.5 py-1 rounded-full border border-emerald-200 inline-block">
+            Transparent Governance
+          </span>
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 tracking-tight">
+            How Your Grievance Gets Solved
+          </h2>
+          <p className="text-sm sm:text-base text-gray-600 leading-relaxed max-w-2xl mx-auto">
+            From instant AI intake and direct Chief Minister's Office review to departmental field action, every step is logged and traceable in real-time.
+          </p>
 
-          <div className="flex flex-col sm:flex-row lg:flex-col gap-3 w-full lg:w-auto shrink-0">
+          <div className="pt-2">
             <Link
               to="/how-it-works"
-              className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-[#c9a227] hover:bg-[#e5c060] text-emerald-950 font-bold text-sm transition-all shadow-md"
+              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-[#1a5c38] hover:bg-[#2d7a52] text-white font-semibold text-sm transition-all shadow-sm hover:shadow-md group"
             >
-              <span>Explore Detailed Workflow Guide</span>
-              <ArrowRight className="w-4 h-4" />
-            </Link>
-            <Link
-              to={submitTarget}
-              className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white font-semibold text-sm transition-all"
-            >
-              <span>Submit a Grievance Now</span>
+              <span>Explore Complete 6-Step Workflow</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
         </div>

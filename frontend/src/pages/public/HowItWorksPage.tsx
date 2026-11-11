@@ -7,8 +7,10 @@ import {
   SearchCheck,
   CheckCircle2,
   ArrowRight,
+  FilePlus2,
 } from 'lucide-react';
 import PageLayout from '../../components/layout/PageLayout';
+import { getUser } from '../../lib/auth';
 
 const stages = [
   {
@@ -50,6 +52,9 @@ const stages = [
 ];
 
 export default function HowItWorksPage() {
+  const user = getUser();
+  const submitTarget = user ? '/citizen/submit' : '/login';
+
   return (
     <PageLayout>
       <div className="bg-[#1a5c38] text-white py-14">
@@ -89,23 +94,26 @@ export default function HowItWorksPage() {
           })}
         </div>
 
-        <div className="mt-12 bg-gradient-to-r from-[#1a5c38] to-[#2d7a52] text-white rounded-2xl p-8 flex flex-col sm:flex-row items-center justify-between gap-6">
-          <div>
-            <h3 className="text-xl font-bold">Ready to lodge or check a grievance?</h3>
-            <p className="text-green-100 text-sm mt-1">
-              Get started in minutes with your mobile number and email address.
+        {/* Call to action card */}
+        <div className="mt-12 bg-gradient-to-r from-[#1a5c38] to-[#2d7a52] text-white rounded-2xl p-8 flex flex-col sm:flex-row items-center justify-between gap-6 shadow-md">
+          <div className="space-y-1">
+            <h3 className="text-xl font-bold">Ready to Submit Your Grievance?</h3>
+            <p className="text-green-100 text-sm">
+              Lodge your complaint now with AI-assisted categorization and real-time tracking.
             </p>
           </div>
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-wrap items-center gap-3 shrink-0">
             <Link
-              to="/register"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#c9a227] hover:bg-[#e5c060] text-[#0f3d25] font-bold text-sm transition-colors"
+              to={submitTarget}
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[#c9a227] hover:bg-[#e5c060] text-emerald-950 font-bold text-sm transition-colors shadow-sm"
             >
-              Register Now <ArrowRight className="w-4 h-4" />
+              <FilePlus2 className="w-4 h-4" />
+              <span>Submit a Grievance Now</span>
+              <ArrowRight className="w-4 h-4" />
             </Link>
             <Link
               to="/track"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-white/15 hover:bg-white/25 text-white font-semibold text-sm transition-colors"
+              className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white/15 hover:bg-white/25 text-white font-semibold text-sm transition-colors"
             >
               Track Reference ID
             </Link>
