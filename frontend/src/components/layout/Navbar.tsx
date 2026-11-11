@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Menu, X, Landmark } from 'lucide-react';
-import { getUser } from '../../lib/auth';
+import { Link, useNavigate } from 'react-router-dom';
+import { Menu, X, Landmark, LayoutDashboard, LogOut } from 'lucide-react';
+import toast from 'react-hot-toast';
+import { clearAuth, getUser } from '../../lib/auth';
 
 const navLinks = [
   { label: 'Home', to: '/' },
@@ -15,6 +16,20 @@ const navLinks = [
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const user = getUser();
+  const navigate = useNavigate();
+
+  const dashboardLink =
+    user?.role === 'CMO_ADMIN'
+      ? '/cmo/dashboard'
+      : user?.role === 'OFFICER'
+      ? '/officer/dashboard'
+      : '/citizen/dashboard';
+
+  const handleLogout = () => {
+    clearAuth();
+    toast.success('Logged out successfully');
+    navigate('/login');
+  };
 
   return (
     <nav className="bg-[#1a5c38] text-white shadow-lg sticky top-0 z-50">
@@ -49,9 +64,27 @@ export default function Navbar() {
           {/* Right side */}
           <div className="hidden md:flex items-center gap-2">
             {user ? (
-              <span className="text-sm font-semibold text-[#e5c060] px-3 py-1.5">
-                {user.name}
-              </span>
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-semibold text-emerald-100 bg-[#2d7a52] px-2.5 py-1.5 rounded-lg max-w-[140px] truncate">
+                  {user.name}
+                </span>
+                <Link
+                  to={dashboardLink}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-[#c9a227] hover:bg-[#e5c060] text-emerald-950 rounded-lg transition-colors shadow-2xs"
+                >
+                  <LayoutDashboard className="w-3.5 h-3.5" />
+                  <span>Dashboard</span>
+                </Link>
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium text-emerald-100 hover:text-white hover:bg-white/10 rounded-lg transition-colors cursor-pointer border border-white/20"
+                  title="Logout"
+                >
+                  <LogOut className="w-3.5 h-3.5" />
+                  <span>Logout</span>
+                </button>
+              </div>
             ) : (
               <>
                 <Link
@@ -114,9 +147,32 @@ export default function Navbar() {
             </Link>
           ))}
           {user ? (
-            <span className="block px-3 py-2 text-sm text-[#e5c060] font-semibold border-t border-white/10 mt-2 pt-2">
-              {user.name}
-            </span>
+            <div className="pt-2 border-t border-white/10 space-y-2 mt-2">
+              <div className="px-3 py-1 text-xs text-emerald-200">
+                Signed in as <strong className="text-white">{user.name}</strong>
+              </div>
+              <div className="grid grid-cols-2 gap-2 px-1">
+                <Link
+                  to={dashboardLink}
+                  onClick={() => setMenuOpen(false)}
+                  className="flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-semibold bg-[#c9a227] hover:bg-[#e5c060] text-emerald-950 rounded-lg transition-colors shadow-2xs"
+                >
+                  <LayoutDashboard className="w-3.5 h-3.5" />
+                  <span>Dashboard</span>
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMenuOpen(false);
+                    handleLogout();
+                  }}
+                  className="flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-medium text-rose-200 bg-rose-950/40 border border-rose-500/30 hover:bg-rose-900/60 rounded-lg transition-colors cursor-pointer"
+                >
+                  <LogOut className="w-3.5 h-3.5" />
+                  <span>Logout</span>
+                </button>
+              </div>
+            </div>
           ) : (
             <div className="pt-2 border-t border-white/10 space-y-1.5">
               <Link
