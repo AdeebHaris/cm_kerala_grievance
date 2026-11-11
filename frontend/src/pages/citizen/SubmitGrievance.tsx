@@ -10,7 +10,6 @@ import {
   AlertTriangle,
   Copy,
   Check,
-  Bot,
   Building2,
   Tag,
   FileText,
@@ -70,10 +69,19 @@ export default function SubmitGrievance() {
       setAiResult(data);
       setCustomSummary(data.summary || '');
       setIsEditingSummary(false);
+      if (data.subject) {
+        setValue('subject', data.subject, { shouldValidate: true });
+      }
+      if (data.category) {
+        setValue('category', data.category, { shouldValidate: true });
+      }
+      if (data.priority) {
+        setValue('priority', data.priority, { shouldValidate: true });
+      }
       toast.success(
         data.is_fallback
-          ? 'Fallback classification generated'
-          : 'AI analysis complete! Review suggestions on the right.'
+          ? 'Classification generated! Please review your form below.'
+          : 'Form auto-filled by AI! Review and edit any field below before submitting.'
       );
     },
     onError: (err: any) => {
@@ -163,26 +171,286 @@ export default function SubmitGrievance() {
   return (
     <DashboardLayout
       title="Submit a Grievance"
-      subtitle="Fill out your complaint details and use our AI Assistant for faster routing"
+      subtitle="Tell us your issue in plain words — our AI Assistant will auto-route and pre-fill your form"
       links={citizenSidebarLinks}
     >
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        {/* Grievance Form */}
-        <div className="lg:col-span-7 bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-          <h2 className="text-lg font-bold text-gray-900 mb-5">Grievance Details</h2>
+      <div className="max-w-4xl mx-auto space-y-6">
+        {/* Step 1: AI Assistant & Natural Language Intake (Comes First) */}
+        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-5">
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-[#1a5c38] to-[#2d7a52] text-[#e5c060] flex items-center justify-center shadow-sm">
+                <Sparkles className="w-5 h-5 text-[#e5c060]" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h2 className="text-lg font-bold text-gray-900">AI Grievance Assistant</h2>
+                  <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-emerald-100/70 text-[#0f3d25] border border-emerald-200">
+                    Step 1 · Smart Intake
+                  </span>
+                </div>
+                <p className="text-xs text-gray-500 mt-0.5">
+                  Describe your problem in everyday words. The assistant will detect the responsible department, evaluate urgency, draft a title, and auto-fill your form.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-4 pt-1">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="sm:col-span-1">
+                <label className="block text-xs font-semibold text-gray-700 mb-1">
+                  District *
+                </label>
+                <select
+                  {...register('district', { required: 'Please select a district' })}
+                  className="w-full px-3.5 py-2.5 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-[#1a5c38] text-sm"
+                >
+                  <option value="">Select Keralam District</option>
+                  {KERALA_DISTRICTS.map((d) => (
+                    <option key={d} value={d}>
+                      {d}
+                    </option>
+                  ))}
+                </select>
+                {errors.district && (
+                  <p className="text-xs text-red-600 mt-1">{errors.district.message}</p>
+                )}
+              </div>
+
+              <div className="sm:col-span-2">
+                <label className="block text-xs font-semibold text-gray-700 mb-1">
+                  Describe your problem in plain words *
+                </label>
+                <textarea
+                  rows={4}
+                  value={descriptionValue || ''}
+                  onChange={(e) => setValue('description', e.target.value, { shouldValidate: true })}
+                  placeholder="Tell us what happened (e.g., Deep potholes on Aluva-Perumbavoor road causing two-wheeler accidents and traffic delays for 2 months)..."
+                  className="w-full px-3.5 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1a5c38] text-sm leading-relaxed"
+                />
+                {errors.description && (
+                  <p className="text-xs text-red-600 mt-1">{errors.description.message}</p>
+                )}
+              </div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-1">
+              <p className="text-xs text-gray-500">
+                Provide as much detail as possible (location, landmark, severity).
+              </p>
+              <button
+                type="button"
+                onClick={handleAnalyze}
+                disabled={aiMutation.isPending}
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 py-2.5 px-5 rounded-xl bg-gradient-to-r from-[#1a5c38] to-[#25784c] hover:from-[#14472c] hover:to-[#1a5c38] text-white font-bold text-sm shadow-sm transition-all disabled:opacity-60 cursor-pointer"
+              >
+                <Sparkles className="w-4 h-4 text-[#e5c060]" />
+                {aiMutation.isPending ? 'Analyzing & Pre-filling Form...' : '✨ Analyze & Pre-fill Form with AI'}
+              </button>
+            </div>
+          </div>
+
+          {/* AI Recommendation Card (Rendered directly here once analyzed) */}
+          {aiResult && (
+            <div className="mt-4 rounded-2xl border border-slate-200/90 bg-gradient-to-b from-slate-50/90 via-white to-emerald-50/30 shadow-sm p-5 space-y-4">
+              {/* Header Badge */}
+              <div className="flex items-center justify-between gap-2 border-b border-slate-100 pb-3">
+                <div className="flex items-center gap-2">
+                  <div className="w-7 h-7 rounded-lg bg-[#1a5c38]/10 text-[#1a5c38] flex items-center justify-center">
+                    <Sparkles className="w-4 h-4 text-[#1a5c38]" />
+                  </div>
+                  <div>
+                    <span className="font-bold text-xs uppercase tracking-wider text-gray-800">
+                      AI Triage Recommendation
+                    </span>
+                    <p className="text-[10px] text-gray-400">Values have been auto-filled in the form below</p>
+                  </div>
+                </div>
+                <span
+                  className={`text-[10px] font-semibold px-2.5 py-0.5 rounded-full ${
+                    aiResult.is_fallback
+                      ? 'bg-amber-100/80 text-amber-900 border border-amber-200'
+                      : 'bg-emerald-100/70 text-[#0f3d25] border border-emerald-200/80'
+                  }`}
+                >
+                  {aiResult.is_fallback ? 'Rule Fallback' : 'Groq AI · Auto-Triage'}
+                </span>
+              </div>
+
+              {aiResult.is_fallback && aiResult.fallback_reason && (
+                <p className="text-xs text-amber-800 bg-amber-50 rounded-lg p-2.5 border border-amber-200/60">
+                  Note: {aiResult.fallback_reason}
+                </p>
+              )}
+
+              {/* Suggested Title / Subject */}
+              {aiResult.subject && (
+                <div className="rounded-xl border border-slate-200/90 bg-white p-3 space-y-1 shadow-2xs">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
+                      <FileText className="w-3.5 h-3.5 text-[#1a5c38]" /> Suggested Subject (Applied Below)
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setValue('subject', aiResult.subject || '', { shouldValidate: true });
+                        toast.success('Suggested subject applied!');
+                      }}
+                      className="text-[11px] font-semibold text-[#1a5c38] hover:text-[#2d7a52] hover:underline"
+                    >
+                      Re-apply Title
+                    </button>
+                  </div>
+                  <p className="text-xs font-semibold text-gray-900 leading-snug">
+                    {aiResult.subject}
+                  </p>
+                </div>
+              )}
+
+              {/* Metrics 2-column tiles */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                {/* Department */}
+                <div className="rounded-xl border border-slate-200/80 bg-white p-3 space-y-1 shadow-2xs">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+                    <Building2 className="w-3 h-3 text-[#1a5c38]" /> Suggested Department
+                  </span>
+                  <p className="text-xs font-bold text-gray-900 leading-snug">
+                    {aiResult.department}
+                  </p>
+                </div>
+
+                {/* Priority */}
+                <div className="rounded-xl border border-slate-200/80 bg-white p-3 space-y-1 shadow-2xs">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                    Assessed Urgency / Priority
+                  </span>
+                  <div className="pt-0.5">
+                    <PriorityBadge priority={aiResult.priority} showFullLabel />
+                  </div>
+                </div>
+              </div>
+
+              {/* Category Row */}
+              <div className="flex items-center justify-between px-3 py-2 rounded-lg bg-slate-100/70 text-xs">
+                <span className="text-gray-500 flex items-center gap-1.5 font-medium">
+                  <Tag className="w-3.5 h-3.5 text-gray-400" /> Category:
+                </span>
+                <span className="font-semibold text-gray-800">{aiResult.category}</span>
+              </div>
+
+              {/* AI Summary of your issue */}
+              <div className="rounded-xl border border-slate-200/90 bg-white p-3.5 space-y-2 shadow-2xs">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-gray-800 flex items-center gap-1.5">
+                    AI Summary of your issue:
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setIsEditingSummary(!isEditingSummary)}
+                    className="text-[11px] font-semibold text-[#1a5c38] hover:text-[#2d7a52] hover:underline"
+                  >
+                    {isEditingSummary ? '✓ Done' : '✎ Edit summary'}
+                  </button>
+                </div>
+
+                {isEditingSummary ? (
+                  <div className="space-y-1">
+                    <textarea
+                      rows={2}
+                      value={customSummary}
+                      onChange={(e) => setCustomSummary(e.target.value)}
+                      placeholder="Type your own summary..."
+                      maxLength={120}
+                      className="w-full text-xs p-2.5 border border-emerald-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-[#1a5c38]"
+                    />
+                    <div className="flex justify-between items-center text-[10px] text-gray-400">
+                      <span>Brief note for reviewing officers</span>
+                      <span>{customSummary.length}/120</span>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="border-l-2 border-[#1a5c38] pl-2.5 py-0.5">
+                    <p className="text-xs text-gray-700 leading-relaxed font-medium">
+                      "{customSummary || aiResult.summary}"
+                    </p>
+                  </div>
+                )}
+                <p className="text-[10px] text-gray-400">
+                  Officers review this summary first. You can edit it if you want to emphasize specific details.
+                </p>
+              </div>
+
+              {/* Duplicate alert if present */}
+              {(aiResult.is_duplicate_risk ||
+                (aiResult.duplicate_candidates && aiResult.duplicate_candidates.length > 0)) && (
+                <div className="bg-rose-50/90 border border-rose-200 rounded-xl p-3.5 space-y-2">
+                  <div className="flex items-center gap-1.5 text-xs font-bold text-rose-800">
+                    <AlertTriangle className="w-4 h-4 text-rose-600" />
+                    Potential Duplicate Grievance Alert
+                  </div>
+                  {aiResult.duplicate_candidates && aiResult.duplicate_candidates.length > 0 ? (
+                    <ul className="space-y-1 text-xs text-rose-700">
+                      {aiResult.duplicate_candidates.map((dup) => (
+                        <li key={dup.reference_id}>
+                          <span className="font-mono font-semibold">{dup.reference_id}</span>:{' '}
+                          {dup.subject} ({dup.status})
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p className="text-xs text-rose-700">
+                      A similar grievance may already exist in this district.
+                    </p>
+                  )}
+                </div>
+              )}
+
+              {/* Re-apply action */}
+              <button
+                type="button"
+                onClick={applyAISuggestions}
+                className="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition-colors cursor-pointer"
+              >
+                <Sparkles className="w-3.5 h-3.5 text-[#1a5c38]" />
+                Re-apply AI Suggestions to Form Below
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Step 2: Verification, Editing & Final Submission */}
+        <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+          <div className="flex items-center justify-between border-b border-gray-100 pb-3">
+            <div>
+              <div className="flex items-center gap-2">
+                <h3 className="text-base font-bold text-gray-900">
+                  Step 2 · Verify & Submit Grievance
+                </h3>
+                {aiResult && (
+                  <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                    ✓ Pre-filled by AI
+                  </span>
+                )}
+              </div>
+              <p className="text-xs text-gray-500 mt-0.5">
+                Review the columns below. You can edit any value before sending to CMO.
+              </p>
+            </div>
+          </div>
 
           <form
             onSubmit={handleSubmit((data) => submitMutation.mutate(data))}
             className="space-y-4"
           >
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   District *
                 </label>
                 <select
                   {...register('district', { required: 'Please select a district' })}
-                  className="w-full px-3.5 py-2.5 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-[#1a5c38]"
+                  className="w-full px-3.5 py-2.5 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-[#1a5c38] text-sm"
                 >
                   <option value="">Select Keralam District</option>
                   {KERALA_DISTRICTS.map((d) => (
@@ -198,11 +466,30 @@ export default function SubmitGrievance() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Category *
+                </label>
+                <select
+                  {...register('category', { required: 'Category is required' })}
+                  className="w-full px-3.5 py-2.5 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-[#1a5c38] text-sm"
+                >
+                  {categoryOptions.map((c) => (
+                    <option key={c} value={c}>
+                      {c}
+                    </option>
+                  ))}
+                </select>
+                {errors.category && (
+                  <p className="text-xs text-red-600 mt-1">{errors.category.message}</p>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
                   Priority *
                 </label>
                 <select
                   {...register('priority', { required: 'Priority is required' })}
-                  className="w-full px-3.5 py-2.5 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-[#1a5c38]"
+                  className="w-full px-3.5 py-2.5 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-[#1a5c38] text-sm"
                 >
                   {GRIEVANCE_PRIORITIES.map((p) => (
                     <option key={p} value={p}>
@@ -215,26 +502,7 @@ export default function SubmitGrievance() {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Category *
-              </label>
-              <select
-                {...register('category', { required: 'Category is required' })}
-                className="w-full px-3.5 py-2.5 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-[#1a5c38]"
-              >
-                {categoryOptions.map((c) => (
-                  <option key={c} value={c}>
-                    {c}
-                  </option>
-                ))}
-              </select>
-              {errors.category && (
-                <p className="text-xs text-red-600 mt-1">{errors.category.message}</p>
-              )}
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Subject *
+                Subject / Title *
               </label>
               <input
                 type="text"
@@ -242,40 +510,11 @@ export default function SubmitGrievance() {
                   required: 'Subject is required',
                   minLength: { value: 5, message: 'Subject should be at least 5 characters' },
                 })}
-                placeholder="Brief title of your grievance"
-                className="w-full px-3.5 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1a5c38]"
+                placeholder="Brief title of your grievance (auto-filled by AI)"
+                className="w-full px-3.5 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1a5c38] text-sm"
               />
               {errors.subject && (
                 <p className="text-xs text-red-600 mt-1">{errors.subject.message}</p>
-              )}
-            </div>
-
-            <div>
-              <div className="flex items-center justify-between mb-1">
-                <label className="block text-sm font-medium text-gray-700">
-                  Description *
-                </label>
-                <button
-                  type="button"
-                  onClick={handleAnalyze}
-                  disabled={aiMutation.isPending}
-                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#1a5c38] hover:text-[#2d7a52] disabled:opacity-50"
-                >
-                  <Sparkles className="w-3.5 h-3.5 text-[#c9a227]" />
-                  {aiMutation.isPending ? 'Analyzing...' : 'Analyze with AI'}
-                </button>
-              </div>
-              <textarea
-                rows={5}
-                {...register('description', {
-                  required: 'Description is required',
-                  minLength: { value: 10, message: 'Please provide at least 10 characters' },
-                })}
-                placeholder="Describe the issue in detail, including location, landmark, and impact..."
-                className="w-full px-3.5 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1a5c38]"
-              />
-              {errors.description && (
-                <p className="text-xs text-red-600 mt-1">{errors.description.message}</p>
               )}
             </div>
 
@@ -309,218 +548,12 @@ export default function SubmitGrievance() {
             <button
               type="submit"
               disabled={submitMutation.isPending}
-              className="w-full flex items-center justify-center gap-2 py-3 px-5 rounded-lg bg-[#1a5c38] hover:bg-[#2d7a52] text-white font-semibold transition-colors disabled:opacity-60"
+              className="w-full flex items-center justify-center gap-2 py-3 px-5 rounded-xl bg-[#1a5c38] hover:bg-[#2d7a52] text-white font-bold text-base transition-colors disabled:opacity-60 cursor-pointer shadow-sm"
             >
               <Send className="w-4 h-4" />
-              {submitMutation.isPending ? 'Submitting Grievance...' : 'Submit Grievance'}
+              {submitMutation.isPending ? 'Submitting Grievance...' : 'Submit Grievance to CMO'}
             </button>
           </form>
-        </div>
-
-        {/* AI Assistant Panel */}
-        <div className="lg:col-span-5 space-y-4">
-          <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 space-y-4">
-            <div className="flex items-center gap-2.5">
-              <div className="w-10 h-10 rounded-lg bg-[#1a5c38] text-[#e5c060] flex items-center justify-center">
-                <Bot className="w-5 h-5" />
-              </div>
-              <div>
-                <h2 className="font-bold text-gray-900">AI Grievance Assistant</h2>
-                <p className="text-xs text-gray-500">
-                  Powered by Groq LLM for automatic triage & duplicate checks
-                </p>
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-xs font-medium text-gray-600 mb-1">
-                Draft or edit grievance description for AI analysis:
-              </label>
-              <textarea
-                rows={4}
-                value={descriptionValue || ''}
-                onChange={(e) => setValue('description', e.target.value, { shouldValidate: true })}
-                placeholder="Type your grievance here (e.g., Broken water main flooding street in Kakkanad for 3 days)..."
-                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1a5c38]"
-              />
-            </div>
-
-            <button
-              type="button"
-              onClick={handleAnalyze}
-              disabled={aiMutation.isPending}
-              className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg bg-[#c9a227] hover:bg-[#e5c060] text-[#0f3d25] font-bold text-sm transition-colors disabled:opacity-60"
-            >
-              <Sparkles className="w-4 h-4" />
-              {aiMutation.isPending ? 'Analyzing with AI...' : 'Analyze with AI'}
-            </button>
-
-            {aiResult && (
-              <div className="rounded-2xl border border-slate-200/90 bg-gradient-to-b from-slate-50/90 via-white to-emerald-50/30 shadow-sm p-5 space-y-4">
-                {/* Header Badge */}
-                <div className="flex items-center justify-between gap-2 border-b border-slate-100 pb-3">
-                  <div className="flex items-center gap-2">
-                    <div className="w-7 h-7 rounded-lg bg-[#1a5c38]/10 text-[#1a5c38] flex items-center justify-center">
-                      <Sparkles className="w-4 h-4 text-[#1a5c38]" />
-                    </div>
-                    <div>
-                      <span className="font-bold text-xs uppercase tracking-wider text-gray-800">
-                        AI Triage Recommendation
-                      </span>
-                      <p className="text-[10px] text-gray-400">Review & apply to your grievance</p>
-                    </div>
-                  </div>
-                  <span
-                    className={`text-[10px] font-semibold px-2.5 py-0.5 rounded-full ${
-                      aiResult.is_fallback
-                        ? 'bg-amber-100/80 text-amber-900 border border-amber-200'
-                        : 'bg-emerald-100/70 text-[#0f3d25] border border-emerald-200/80'
-                    }`}
-                  >
-                    {aiResult.is_fallback ? 'Rule Fallback' : 'Groq AI · Triage'}
-                  </span>
-                </div>
-
-                {aiResult.is_fallback && aiResult.fallback_reason && (
-                  <p className="text-xs text-amber-800 bg-amber-50 rounded-lg p-2.5 border border-amber-200/60">
-                    Note: {aiResult.fallback_reason}
-                  </p>
-                )}
-
-                {/* Suggested Title / Subject */}
-                {aiResult.subject && (
-                  <div className="rounded-xl border border-slate-200/90 bg-white p-3 space-y-1 shadow-2xs">
-                    <div className="flex items-center justify-between">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
-                        <FileText className="w-3.5 h-3.5 text-[#1a5c38]" /> Suggested Subject
-                      </span>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setValue('subject', aiResult.subject || '', { shouldValidate: true });
-                          toast.success('Suggested subject applied to form!');
-                        }}
-                        className="text-[11px] font-semibold text-[#1a5c38] hover:text-[#2d7a52] hover:underline"
-                      >
-                        Use this title
-                      </button>
-                    </div>
-                    <p className="text-xs font-semibold text-gray-900 leading-snug">
-                      {aiResult.subject}
-                    </p>
-                  </div>
-                )}
-
-                {/* Metrics 2-column tiles */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                  {/* Department */}
-                  <div className="rounded-xl border border-slate-200/80 bg-white p-3 space-y-1 shadow-2xs">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-                      <Building2 className="w-3 h-3 text-[#1a5c38]" /> Department
-                    </span>
-                    <p className="text-xs font-bold text-gray-900 leading-snug">
-                      {aiResult.department}
-                    </p>
-                  </div>
-
-                  {/* Priority */}
-                  <div className="rounded-xl border border-slate-200/80 bg-white p-3 space-y-1 shadow-2xs">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                      Assessed Priority
-                    </span>
-                    <div className="pt-0.5">
-                      <PriorityBadge priority={aiResult.priority} showFullLabel />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Category Row */}
-                <div className="flex items-center justify-between px-3 py-2 rounded-lg bg-slate-100/70 text-xs">
-                  <span className="text-gray-500 flex items-center gap-1.5 font-medium">
-                    <Tag className="w-3.5 h-3.5 text-gray-400" /> Category:
-                  </span>
-                  <span className="font-semibold text-gray-800">{aiResult.category}</span>
-                </div>
-
-                {/* AI Summary of your issue */}
-                <div className="rounded-xl border border-slate-200/90 bg-white p-3.5 space-y-2 shadow-2xs">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-gray-800 flex items-center gap-1.5">
-                      AI Summary of your issue:
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => setIsEditingSummary(!isEditingSummary)}
-                      className="text-[11px] font-semibold text-[#1a5c38] hover:text-[#2d7a52] hover:underline"
-                    >
-                      {isEditingSummary ? '✓ Done' : '✎ Edit summary'}
-                    </button>
-                  </div>
-
-                  {isEditingSummary ? (
-                    <div className="space-y-1">
-                      <textarea
-                        rows={2}
-                        value={customSummary}
-                        onChange={(e) => setCustomSummary(e.target.value)}
-                        placeholder="Type your own summary..."
-                        maxLength={120}
-                        className="w-full text-xs p-2.5 border border-emerald-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-[#1a5c38]"
-                      />
-                      <div className="flex justify-between items-center text-[10px] text-gray-400">
-                        <span>Brief note for reviewing officers</span>
-                        <span>{customSummary.length}/120</span>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="border-l-2 border-[#1a5c38] pl-2.5 py-0.5">
-                      <p className="text-xs text-gray-700 leading-relaxed font-medium">
-                        "{customSummary || aiResult.summary}"
-                      </p>
-                    </div>
-                  )}
-                  <p className="text-[10px] text-gray-400">
-                    Officers review this summary first. You can edit it if you want to emphasize specific details.
-                  </p>
-                </div>
-
-                {/* Duplicate alert if present */}
-                {(aiResult.is_duplicate_risk ||
-                  (aiResult.duplicate_candidates && aiResult.duplicate_candidates.length > 0)) && (
-                  <div className="bg-rose-50/90 border border-rose-200 rounded-xl p-3.5 space-y-2">
-                    <div className="flex items-center gap-1.5 text-xs font-bold text-rose-800">
-                      <AlertTriangle className="w-4 h-4 text-rose-600" />
-                      Potential Duplicate Grievance Alert
-                    </div>
-                    {aiResult.duplicate_candidates && aiResult.duplicate_candidates.length > 0 ? (
-                      <ul className="space-y-1 text-xs text-rose-700">
-                        {aiResult.duplicate_candidates.map((dup) => (
-                          <li key={dup.reference_id}>
-                            <span className="font-mono font-semibold">{dup.reference_id}</span>:{' '}
-                            {dup.subject} ({dup.status})
-                          </li>
-                        ))}
-                      </ul>
-                    ) : (
-                      <p className="text-xs text-rose-700">
-                        A similar grievance may already exist in this district.
-                      </p>
-                    )}
-                  </div>
-                )}
-
-                {/* Apply All Button */}
-                <button
-                  type="button"
-                  onClick={applyAISuggestions}
-                  className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-[#1a5c38] hover:bg-[#25784c] text-white text-xs font-bold shadow-xs hover:shadow transition-all"
-                >
-                  <Sparkles className="w-3.5 h-3.5 text-[#e5c060]" />
-                  Apply All Suggestions to Form
-                </button>
-              </div>
-            )}
-          </div>
         </div>
       </div>
 
