@@ -67,8 +67,8 @@ export default function Navbar() {
           {/* Right side */}
           <div className="hidden md:flex items-center gap-2">
             {user ? (
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-semibold text-emerald-100 bg-[#2d7a52] px-2.5 py-1.5 rounded-lg max-w-[140px] truncate">
+              <div className="flex items-center gap-2.5">
+                <span className="text-xs font-medium text-emerald-100/90 max-w-[150px] truncate select-none">
                   {user.name}
                 </span>
                 <Link

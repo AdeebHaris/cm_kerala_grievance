@@ -71,16 +71,16 @@ export default function DashboardLayout({ title, subtitle, links, children }: Da
       <div className="p-3 border-t border-green-800/40 space-y-1">
         <Link
           to="/"
-          className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-green-100 hover:bg-[#2d7a52] transition-colors"
+          className="group flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-emerald-100 hover:text-[#f4d068] hover:bg-white/10 transition-all duration-200 cursor-pointer"
         >
-          <Home className="w-4 h-4" />
+          <Home className="w-4 h-4 text-emerald-300 group-hover:text-[#f4d068] group-hover:scale-110 transition-all duration-200" />
           <span>Public Portal</span>
         </Link>
         <button
           onClick={handleLogout}
-          className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-red-200 hover:bg-red-900/40 transition-colors"
+          className="group w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-rose-300 hover:text-white hover:bg-rose-600/20 border border-transparent hover:border-rose-500/40 transition-all duration-200 cursor-pointer"
         >
-          <LogOut className="w-4 h-4" />
+          <LogOut className="w-4 h-4 text-rose-300 group-hover:text-rose-200 group-hover:translate-x-0.5 transition-all duration-200" />
           <span>Logout</span>
         </button>
       </div>
