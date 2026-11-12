@@ -1,5 +1,5 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, func, and_
+from sqlalchemy import select, func, and_, or_
 from sqlalchemy.orm import selectinload
 from typing import Optional, List
 from datetime import datetime, timedelta
@@ -11,6 +11,28 @@ from app.models.models import (
     CitizenFeedback,
     Department,
 )
+
+CATEGORY_FILTER_MAP = {
+    "Roads & Infrastructure": ["Roads & Infrastructure", "Roads & Bridges", "Roads"],
+    "Water Supply & Sanitation": ["Water Supply & Sanitation", "Water Supply", "Water"],
+    "Electricity & Power": ["Electricity & Power", "Electricity", "Power"],
+    "Healthcare & Hospitals": ["Healthcare & Hospitals", "Healthcare", "Health"],
+    "Education & Schools": ["Education & Schools", "Education", "Schools"],
+    "Revenue & Land Records": ["Revenue & Land Records", "Revenue & Land", "Revenue", "Land"],
+    "Agriculture & Irrigation": ["Agriculture & Irrigation", "Agriculture", "Irrigation"],
+    "Public Transport": ["Public Transport", "Transport"],
+    "Forest & Environment": ["Forest & Environment", "Wildlife & Forest", "Forest"],
+    "Social Welfare & Pensions": ["Social Welfare & Pensions", "Social Welfare", "Welfare"],
+}
+
+
+def _category_filter_condition(cat: str):
+    aliases = CATEGORY_FILTER_MAP.get(cat, [cat])
+    primary = cat.split("&")[0].strip() if "&" in cat else cat.split()[0].strip()
+    return or_(
+        Grievance.category.in_(aliases),
+        Grievance.category.ilike(f"%{primary}%"),
+    )
 
 
 class GrievanceRepository:
@@ -128,7 +150,7 @@ class GrievanceRepository:
         if district:
             filters.append(Grievance.district == district)
         if category:
-            filters.append(Grievance.category == category)
+            filters.append(_category_filter_condition(category))
         if priority:
             filters.append(Grievance.priority == priority)
         if status:
@@ -152,7 +174,7 @@ class GrievanceRepository:
         if district:
             filters.append(Grievance.district == district)
         if category:
-            filters.append(Grievance.category == category)
+            filters.append(_category_filter_condition(category))
         if priority:
             filters.append(Grievance.priority == priority)
         if status:

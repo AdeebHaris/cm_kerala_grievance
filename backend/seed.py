@@ -227,7 +227,7 @@ async def seed():
             {
                 "reference_id": "GRV-20261101-TVM01",
                 "district": "Thiruvananthapuram",
-                "category": "Roads & Bridges",
+                "category": "Roads & Infrastructure",
                 "subject": "Severe potholes and waterlogging near Kazhakootam bypass",
                 "description": "The service road near Kazhakootam Technopark junction has developed deep potholes causing daily traffic bottlenecks and two-wheeler accidents during evening rains.",
                 "priority": "HIGH",
@@ -242,7 +242,7 @@ async def seed():
             {
                 "reference_id": "GRV-20261102-KLM02",
                 "district": "Kollam",
-                "category": "Water Supply",
+                "category": "Water Supply & Sanitation",
                 "subject": "Irregular drinking water supply in Chavara coastal ward",
                 "description": "Piped drinking water has been disrupted for six consecutive days in Ward 12 of Chavara panchayat due to a burst main valve.",
                 "priority": "HIGH",
@@ -257,7 +257,7 @@ async def seed():
             {
                 "reference_id": "GRV-20261103-PTA03",
                 "district": "Pathanamthitta",
-                "category": "Electricity",
+                "category": "Electricity & Power",
                 "subject": "Frequent voltage fluctuations damaging appliances in Adoor",
                 "description": "Low voltage and frequent tripping from the 11kV feeder near Adoor Central has been affecting homes and small clinics for two weeks.",
                 "priority": "MEDIUM",
@@ -272,7 +272,7 @@ async def seed():
             {
                 "reference_id": "GRV-20261104-ALP04",
                 "district": "Alappuzha",
-                "category": "Agriculture",
+                "category": "Agriculture & Irrigation",
                 "subject": "Delayed paddy procurement payment in Kuttanad block",
                 "description": "Farmers who supplied paddy during the Puncha harvest at Mankombu procurement centre are still awaiting bank credit after 45 days.",
                 "priority": "HIGH",
@@ -287,7 +287,7 @@ async def seed():
             {
                 "reference_id": "GRV-20261105-KTM05",
                 "district": "Kottayam",
-                "category": "Healthcare",
+                "category": "Healthcare & Hospitals",
                 "subject": "Shortage of insulin and pediatric doctors at PHC Ettumanoor",
                 "description": "Patients visiting the primary health centre report unavailability of routine diabetes medication and absence of evening OP duty doctor.",
                 "priority": "HIGH",
@@ -302,7 +302,7 @@ async def seed():
             {
                 "reference_id": "GRV-20261106-IDK06",
                 "district": "Idukki",
-                "category": "Wildlife & Forest",
+                "category": "Forest & Environment",
                 "subject": "Damaged solar fencing near Munnar settlement causing elephant entry",
                 "description": "A 400-meter stretch of solar fencing bordering Chinnakanal estate has collapsed, allowing wild elephants into residential lanes at night.",
                 "priority": "HIGH",
@@ -333,7 +333,7 @@ async def seed():
             {
                 "reference_id": "GRV-20261108-TSR08",
                 "district": "Thrissur",
-                "category": "Roads & Bridges",
+                "category": "Roads & Infrastructure",
                 "subject": "Broken culvert railing on Guruvayur-Kunnamkulam link road",
                 "description": "Guard rails on the narrow culvert near Choondal have rusted and broken off, posing serious danger to school buses.",
                 "priority": "HIGH",
@@ -348,7 +348,7 @@ async def seed():
             {
                 "reference_id": "GRV-20261109-PKD09",
                 "district": "Palakkad",
-                "category": "Revenue & Land",
+                "category": "Revenue & Land Records",
                 "subject": "Pending mutation and digital land tax update in Ottapalam village",
                 "description": "Application for pokkuvaravu mutation filed three months ago remains pending without field verification date.",
                 "priority": "LOW",
@@ -363,7 +363,7 @@ async def seed():
             {
                 "reference_id": "GRV-20261110-MLP10",
                 "district": "Malappuram",
-                "category": "Education",
+                "category": "Education & Schools",
                 "subject": "Roof leakage in Government LP School classrooms at Tirur",
                 "description": "Two classrooms in the old block leak heavily during rain, forcing students to share the hall.",
                 "priority": "MEDIUM",
@@ -379,7 +379,7 @@ async def seed():
             {
                 "reference_id": "GRV-20261111-KKD11",
                 "district": "Kozhikode",
-                "category": "Healthcare",
+                "category": "Healthcare & Hospitals",
                 "subject": "Request for fogging and drainage cleaning near Beach Hospital ward",
                 "description": "Stagnant water in blocked roadside drains behind Kozhikode Beach Hospital is causing mosquito breeding and dengue fear.",
                 "priority": "HIGH",
@@ -395,7 +395,7 @@ async def seed():
             {
                 "reference_id": "GRV-20261112-WYD12",
                 "district": "Wayanad",
-                "category": "Social Welfare",
+                "category": "Social Welfare & Pensions",
                 "subject": "Old-age welfare pension biometric verification issue in Kalpetta",
                 "description": "Several bedridden senior citizens in Meppadi gram panchayat are unable to complete fingerprint mustering for pension renewal.",
                 "priority": "MEDIUM",
@@ -410,7 +410,7 @@ async def seed():
             {
                 "reference_id": "GRV-20261113-KNR13",
                 "district": "Kannur",
-                "category": "Roads & Bridges",
+                "category": "Roads & Infrastructure",
                 "subject": "Streetlight non-functional along Thalassery-Mahe highway stretch",
                 "description": "Over 25 LED streetlights have remained off for three weeks along the newly widened bridge approach, causing safety hazards.",
                 "priority": "MEDIUM",
@@ -425,7 +425,7 @@ async def seed():
             {
                 "reference_id": "GRV-20261114-KSD14",
                 "district": "Kasaragod",
-                "category": "Water Supply",
+                "category": "Water Supply & Sanitation",
                 "subject": "Salinity intrusion in Bekal coastal drinking water well project",
                 "description": "Residents near Bekal fort coastal belt are getting brackish water from the public borewell network since last month.",
                 "priority": "HIGH",
@@ -440,7 +440,7 @@ async def seed():
             {
                 "reference_id": "GRV-20261115-TVM15",
                 "district": "Thiruvananthapuram",
-                "category": "Roads & Bridges",
+                "category": "Roads & Infrastructure",
                 "subject": "Pedestrian zebra crossing and footpath repair near Medical College",
                 "description": "Broken concrete slabs on the footpath outside Thiruvananthapuram Medical College gate are making it difficult for wheelchair users and elderly patients.",
                 "priority": "MEDIUM",
@@ -456,7 +456,7 @@ async def seed():
             {
                 "reference_id": "GRV-20261116-KNR16",
                 "district": "Kannur",
-                "category": "Wildlife & Forest",
+                "category": "Forest & Environment",
                 "subject": "Wild boar menace damaging tapioca and plantain crops in Iritty",
                 "description": "Farming families in Iritty hilly area report severe nocturnal crop damage by wild boar herds; request immediate forest squad action.",
                 "priority": "HIGH",

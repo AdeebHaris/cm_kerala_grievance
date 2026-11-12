@@ -6,8 +6,10 @@ from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from sqlalchemy import update
 from app.config import settings
-from app.database import engine, Base, get_db
+from app.database import engine, Base, get_db, AsyncSessionLocal
+from app.models.models import Grievance
 from app.controllers import grievance_controller
 from app.routers import (
     auth_router,
@@ -24,6 +26,31 @@ from app.routers import (
 async def lifespan(app: FastAPI):
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
+
+    # Automatically normalize any legacy grievance categories in live PostgreSQL database
+    try:
+        async with AsyncSessionLocal() as db:
+            category_migration = {
+                "Roads & Bridges": "Roads & Infrastructure",
+                "Water Supply": "Water Supply & Sanitation",
+                "Electricity": "Electricity & Power",
+                "Healthcare": "Healthcare & Hospitals",
+                "Education": "Education & Schools",
+                "Revenue & Land": "Revenue & Land Records",
+                "Agriculture": "Agriculture & Irrigation",
+                "Wildlife & Forest": "Forest & Environment",
+                "Social Welfare": "Social Welfare & Pensions",
+            }
+            for old_cat, new_cat in category_migration.items():
+                await db.execute(
+                    update(Grievance)
+                    .where(Grievance.category == old_cat)
+                    .values(category=new_cat)
+                )
+            await db.commit()
+    except Exception as e:
+        print(f"Category migration check warning: {e}")
+
     yield
 
 

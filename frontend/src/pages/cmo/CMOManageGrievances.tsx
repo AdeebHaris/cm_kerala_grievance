@@ -118,9 +118,8 @@ export default function CMOManageGrievances() {
   };
 
   const dynamicCategories = useMemo(() => {
-    const fromData = (listPayload?.grievances || []).map((g) => g.category).filter(Boolean);
-    return Array.from(new Set([...GRIEVANCE_CATEGORIES, ...fromData]));
-  }, [listPayload]);
+    return GRIEVANCE_CATEGORIES;
+  }, []);
 
   return (
     <DashboardLayout
