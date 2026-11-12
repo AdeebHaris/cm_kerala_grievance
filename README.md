@@ -56,6 +56,114 @@ flowchart LR
 
 ---
 
+## Database ER Diagram
+
+```mermaid
+erDiagram
+    departments {
+        varchar id PK
+        varchar name
+        text description
+        varchar code UK
+        timestamp created_at
+    }
+
+    users {
+        varchar id PK
+        varchar name
+        varchar email UK
+        varchar mobile
+        varchar password_hash
+        varchar role
+        varchar department_id FK
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    grievances {
+        varchar id PK
+        varchar reference_id UK
+        varchar citizen_id FK
+        varchar district
+        varchar category
+        varchar subject
+        text description
+        varchar priority
+        varchar status
+        varchar assigned_dept_id FK
+        text ai_summary
+        varchar ai_category
+        varchar ai_priority
+        varchar ai_department
+        boolean is_duplicate_risk
+        boolean is_escalated
+        timestamp escalated_at
+        text cmo_remarks
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    grievance_history {
+        varchar id PK
+        varchar grievance_id FK
+        varchar status
+        text remarks
+        varchar changed_by_id FK
+        timestamp changed_at
+    }
+
+    department_assignments {
+        varchar id PK
+        varchar grievance_id FK
+        varchar department_id FK
+        varchar assigned_by_id FK
+        timestamp assigned_at
+        text action_report
+        text resolution_details
+    }
+
+    attachments {
+        varchar id PK
+        varchar grievance_id FK
+        varchar url
+        varchar filename
+        varchar file_type
+        varchar uploaded_by_id FK
+        timestamp created_at
+    }
+
+    citizen_feedback {
+        varchar id PK
+        varchar grievance_id FK
+        integer rating
+        text comment
+        timestamp submitted_at
+    }
+
+    contact_enquiries {
+        varchar id PK
+        varchar name
+        varchar email
+        varchar subject
+        text message
+        timestamp submitted_at
+    }
+
+    departments ||--o{ users : "employs officers"
+    departments ||--o{ grievances : "assigned to"
+    departments ||--o{ department_assignments : "receives"
+    users ||--o{ grievances : "submits (citizen)"
+    users ||--o{ grievance_history : "records change"
+    users ||--o{ department_assignments : "assigns (CMO/officer)"
+    users ||--o{ attachments : "uploads"
+    grievances ||--o{ grievance_history : "logs timeline"
+    grievances ||--o{ department_assignments : "tracks action"
+    grievances ||--o{ attachments : "has files"
+    grievances ||--o| citizen_feedback : "receives 0..1"
+```
+
+---
+
 ## Quick Start Guide
 
 ### Prerequisites

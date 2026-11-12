@@ -9,6 +9,7 @@ from app.models.models import (
     GrievanceHistory,
     DepartmentAssignment,
     CitizenFeedback,
+    ContactEnquiry,
 )
 from app.services.auth_service import hash_password
 
@@ -503,8 +504,28 @@ async def seed():
                     )
                 )
 
+        # Seed sample Contact Enquiries
+        existing_enquiries = (await db.execute(select(ContactEnquiry))).scalars().all()
+        if not existing_enquiries:
+            db.add_all([
+                ContactEnquiry(
+                    name="Ananya Pillai",
+                    email="ananya.pillai@example.com",
+                    subject="Inquiry regarding rural water supply project in Alappuzha",
+                    message="Could you provide details on the expected timeline for completion of the pipeline extension in Kuttanad?",
+                    submitted_at=datetime.utcnow() - timedelta(days=2),
+                ),
+                ContactEnquiry(
+                    name="George Varghese",
+                    email="george.v@example.com",
+                    subject="KSEB Online Bill Payment Receipts",
+                    message="Where can I download consolidated annual receipts for electricity bill payments made through the portal?",
+                    submitted_at=datetime.utcnow() - timedelta(days=1),
+                ),
+            ])
+
         await db.commit()
-        print("PostgreSQL seed completed successfully (10 departments, 4 users, 15 grievances).")
+        print("PostgreSQL seed completed successfully (10 departments, 4 users, 15 grievances, contact enquiries).")
 
 
 if __name__ == "__main__":
