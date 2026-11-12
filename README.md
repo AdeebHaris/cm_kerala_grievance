@@ -4,6 +4,16 @@
 
 ---
 
+## Live Deployment & Deliverables
+
+- 🌐 **Live Web Application (Frontend):** [https://cm-kerala-grievance.vercel.app](https://cm-kerala-grievance.vercel.app)
+- ⚙️ **Live Backend API:** [https://cm-kerala-grievance.onrender.com](https://cm-kerala-grievance.onrender.com)
+- 🩺 **API Health Check:** [https://cm-kerala-grievance.onrender.com/api/health](https://cm-kerala-grievance.onrender.com/api/health)
+- 🎥 **Video Demonstration Walkthrough (4:26 mins):** [Watch Demo Video on Google Drive](https://drive.google.com/file/d/1X7DGp7Q0t7qOI2nsFpAZmmmpsQMMLWTh/view?usp=sharing)
+- 📂 **GitHub Repository:** [https://github.com/AdeebHaris/cm_kerala_grievance](https://github.com/AdeebHaris/cm_kerala_grievance)
+
+---
+
 ## Technology Stack
 
 | Layer | Technologies |

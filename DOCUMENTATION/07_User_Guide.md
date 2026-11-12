@@ -2,6 +2,8 @@
 
 Welcome to the **CM Kerala Public Grievance Redressal Portal** User Guide. This walkthrough explains every portal workflow organized by role: **Public Visitor**, **Citizen**, **CMO Administrator**, and **Department Officer**.
 
+> 🎥 **Video Walkthrough Demonstration (4:26 mins):** [Watch Demo Video on Google Drive](https://drive.google.com/file/d/1X7DGp7Q0t7qOI2nsFpAZmmmpsQMMLWTh/view?usp=sharing)
+
 ---
 
 ## End-to-End Portal Journey Overview
