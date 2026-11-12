@@ -86,7 +86,7 @@ export default function RegisterPage() {
               <input
                 type="text"
                 {...register('name', { required: 'Full name is required' })}
-                placeholder="e.g. Anjali Menon"
+                placeholder="Enter your name"
                 className="w-full px-3.5 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1a5c38]"
               />
               {errors.name && <p className="text-xs text-red-600 mt-1">{errors.name.message}</p>}
@@ -97,7 +97,7 @@ export default function RegisterPage() {
               <input
                 type="email"
                 {...register('email', { required: 'Email is required' })}
-                placeholder="anjali@example.com"
+                placeholder="Enter your email"
                 className="w-full px-3.5 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1a5c38]"
               />
               {errors.email && <p className="text-xs text-red-600 mt-1">{errors.email.message}</p>}
@@ -111,7 +111,7 @@ export default function RegisterPage() {
                   required: 'Mobile number is required',
                   minLength: { value: 10, message: 'Enter a valid 10-digit mobile number' },
                 })}
-                placeholder="9876543210"
+                placeholder="Enter your mobile number"
                 className="w-full px-3.5 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1a5c38]"
               />
               {errors.mobile && <p className="text-xs text-red-600 mt-1">{errors.mobile.message}</p>}
@@ -126,7 +126,7 @@ export default function RegisterPage() {
                     required: 'Password is required',
                     minLength: { value: 6, message: 'Minimum 6 characters required' },
                   })}
-                  placeholder="Create a password"
+                  placeholder="Enter your password"
                   className="w-full px-3.5 py-2.5 pr-11 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1a5c38]"
                 />
                 <button
@@ -155,7 +155,7 @@ export default function RegisterPage() {
                     required: 'Please confirm your password',
                     validate: (val) => val === getValues('password') || 'Passwords do not match',
                   })}
-                  placeholder="Re-enter your password"
+                  placeholder="Confirm your password"
                   className="w-full px-3.5 py-2.5 pr-11 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1a5c38]"
                 />
                 <button

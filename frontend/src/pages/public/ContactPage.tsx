@@ -124,7 +124,7 @@ export default function ContactPage() {
                   <input
                     type="text"
                     {...register('name', { required: 'Name is required' })}
-                    placeholder="Your name"
+                    placeholder="Enter your name"
                     className="w-full px-3.5 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1a5c38]"
                   />
                   {errors.name && <p className="text-xs text-red-600 mt-1">{errors.name.message}</p>}
@@ -135,7 +135,7 @@ export default function ContactPage() {
                   <input
                     type="email"
                     {...register('email', { required: 'Email is required' })}
-                    placeholder="you@example.com"
+                    placeholder="Enter your email"
                     className="w-full px-3.5 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1a5c38]"
                   />
                   {errors.email && <p className="text-xs text-red-600 mt-1">{errors.email.message}</p>}
@@ -147,7 +147,7 @@ export default function ContactPage() {
                 <input
                   type="text"
                   {...register('subject', { required: 'Subject is required' })}
-                  placeholder="How can we help?"
+                  placeholder="Enter enquiry subject"
                   className="w-full px-3.5 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1a5c38]"
                 />
                 {errors.subject && <p className="text-xs text-red-600 mt-1">{errors.subject.message}</p>}
@@ -158,7 +158,7 @@ export default function ContactPage() {
                 <textarea
                   rows={5}
                   {...register('message', { required: 'Message is required', minLength: { value: 10, message: 'Please enter at least 10 characters' } })}
-                  placeholder="Write your enquiry here..."
+                  placeholder="Enter your enquiry message here..."
                   className="w-full px-3.5 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1a5c38]"
                 />
                 {errors.message && <p className="text-xs text-red-600 mt-1">{errors.message.message}</p>}

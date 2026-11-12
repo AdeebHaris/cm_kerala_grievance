@@ -98,7 +98,7 @@ export default function LoginPage() {
                 <input
                   type="email"
                   {...register('email', { required: 'Email is required' })}
-                  placeholder="name@example.com"
+                  placeholder="Enter your email"
                   className="w-full px-3.5 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1a5c38]"
                 />
                 {errors.email && (
@@ -114,7 +114,7 @@ export default function LoginPage() {
                   <input
                     type={showPassword ? 'text' : 'password'}
                     {...register('password', { required: 'Password is required' })}
-                    placeholder="••••••••"
+                    placeholder="Enter your password"
                     className="w-full px-3.5 py-2.5 pr-11 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1a5c38]"
                   />
                   <button
