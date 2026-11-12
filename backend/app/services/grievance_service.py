@@ -1,7 +1,21 @@
 import random
 import string
 from datetime import datetime
+from typing import Optional, Any
 from app.models.models import Grievance
+
+
+def _format_utc_iso(dt: Any) -> Optional[str]:
+    if not dt:
+        return None
+    if isinstance(dt, str):
+        return dt if dt.endswith("Z") else dt + "Z"
+    if hasattr(dt, "isoformat"):
+        iso = dt.isoformat()
+        if not iso.endswith("Z") and "+" not in iso and "-" not in iso[10:]:
+            return iso + "Z"
+        return iso
+    return str(dt)
 
 
 def generate_reference_id() -> str:
@@ -37,10 +51,10 @@ def serialize_grievance(
         "ai_department": g.ai_department,
         "is_duplicate_risk": g.is_duplicate_risk,
         "is_escalated": bool(g.is_escalated),
-        "escalated_at": g.escalated_at,
+        "escalated_at": _format_utc_iso(g.escalated_at),
         "cmo_remarks": g.cmo_remarks,
-        "created_at": g.created_at,
-        "updated_at": g.updated_at,
+        "created_at": _format_utc_iso(g.created_at),
+        "updated_at": _format_utc_iso(g.updated_at),
     }
     if include_citizen and "citizen" in g.__dict__ and g.citizen:
         citizen_data = {
@@ -70,7 +84,7 @@ def serialize_grievance(
                 "status": h.status,
                 "remarks": h.remarks,
                 "changed_by_id": h.changed_by_id,
-                "changed_at": h.changed_at,
+                "changed_at": _format_utc_iso(h.changed_at),
                 "changed_by": (
                     {"name": h.changed_by.name, "role": h.changed_by.role}
                     if "changed_by" in h.__dict__ and h.changed_by
@@ -88,7 +102,7 @@ def serialize_grievance(
                 "filename": a.filename,
                 "file_type": a.file_type,
                 "uploaded_by_id": a.uploaded_by_id,
-                "created_at": a.created_at,
+                "created_at": _format_utc_iso(a.created_at),
             }
             for a in (g.attachments or [])
         ]
@@ -99,7 +113,7 @@ def serialize_grievance(
                 "grievance_id": asgn.grievance_id,
                 "department_id": asgn.department_id,
                 "assigned_by_id": asgn.assigned_by_id,
-                "assigned_at": asgn.assigned_at,
+                "assigned_at": _format_utc_iso(asgn.assigned_at),
                 "action_report": asgn.action_report,
                 "resolution_details": asgn.resolution_details,
                 "department": (
@@ -126,7 +140,7 @@ def serialize_grievance(
                 "grievance_id": g.feedback.grievance_id,
                 "rating": g.feedback.rating,
                 "comment": g.feedback.comment,
-                "submitted_at": g.feedback.submitted_at,
+                "submitted_at": _format_utc_iso(g.feedback.submitted_at),
             }
             if "feedback" in g.__dict__ and g.feedback
             else None
