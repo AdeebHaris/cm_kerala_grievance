@@ -112,7 +112,7 @@ On the right **CMO Actions Panel**, four dedicated cards control the case:
 
 ## 4. Department Officer Guide (`OFFICER` Role)
 
-Log in at `/login` using `officer@demo.com` (PWD) or `health.officer@demo.com` (Health Services) with password `Demo@1234` to access `/officer/dashboard`.
+Log in at `/login` using any of the 10 department officer accounts (e.g. `officer@demo.com` for PWD, `health.officer@demo.com` for Health, or select directly from the **Department Officer Dropdown** on `/login`) with password `Demo@1234` to access `/officer/dashboard`.
 
 ### 4.1 Department Queue (`/officer/dashboard`)
 - The top banner confirms your **Department Queue** (e.g., *Public Works Department* or *Health Services*) and total matching grievances.

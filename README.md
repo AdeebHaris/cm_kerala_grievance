@@ -222,7 +222,7 @@ npm run dev
 
 ## Demo Credentials
 
-The idempotent seed script (`backend/seed.py`) provisions four demonstration accounts across all three RBAC roles. All demo accounts use the password **`Demo@1234`**.
+The idempotent seed script (`backend/seed.py`) provisions twelve demonstration accounts across all three RBAC roles, including dedicated officers for all 10 state departments. All demo accounts use the password **`Demo@1234`**.
 
 | Role | Name | Email | Password | Department | Portal Landing Route |
 | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -230,8 +230,16 @@ The idempotent seed script (`backend/seed.py`) provisions four demonstration acc
 | `CMO_ADMIN` | CMO Administrator | `cmo@demo.com` | `Demo@1234` | — | `/cmo/dashboard` |
 | `OFFICER` | Suresh Kumar | `officer@demo.com` | `Demo@1234` | Public Works Department (`PWD`) | `/officer/dashboard` |
 | `OFFICER` | Dr. Meera Menon | `health.officer@demo.com` | `Demo@1234` | Health Services (`HLTH`) | `/officer/dashboard` |
+| `OFFICER` | Prof. Thomas Mathew | `edu.officer@demo.com` | `Demo@1234` | Education Department (`EDU`) | `/officer/dashboard` |
+| `OFFICER` | Geetha Krishnan | `rev.officer@demo.com` | `Demo@1234` | Revenue Department (`REV`) | `/officer/dashboard` |
+| `OFFICER` | Rajeev Nambiar | `water.officer@demo.com` | `Demo@1234` | Water Resources (`WTR`) | `/officer/dashboard` |
+| `OFFICER` | Vinod Chandran | `kseb.officer@demo.com` | `Demo@1234` | Kerala State Electricity Board (`KSEB`) | `/officer/dashboard` |
+| `OFFICER` | Suma Varma | `agri.officer@demo.com` | `Demo@1234` | Agriculture Department (`AGRI`) | `/officer/dashboard` |
+| `OFFICER` | Deepa R. Nair | `trans.officer@demo.com` | `Demo@1234` | Transport Department (`TRNS`) | `/officer/dashboard` |
+| `OFFICER` | Manoj K. V. | `forest.officer@demo.com` | `Demo@1234` | Forest Department (`FRST`) | `/officer/dashboard` |
+| `OFFICER` | Lakshmi Priya | `social.officer@demo.com` | `Demo@1234` | Social Welfare Department (`SWD`) | `/officer/dashboard` |
 
-> **Tip:** The Login page (`/login`) also provides one-click auto-fill buttons for Citizen, CMO Admin, and Officer (PWD) demo accounts.
+> **Tip:** The Login page (`/login`) provides 1-click auto-fill buttons for Citizen and CMO Admin, plus a dedicated **Department Officer dropdown** selector covering all 10 departments with auto-fill.
 
 ---
 

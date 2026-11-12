@@ -108,6 +108,7 @@ async def seed():
                 "role": "CMO_ADMIN",
                 "department_id": None,
             },
+            # Department Officers for all 10 Departments
             {
                 "email": "officer@demo.com",
                 "name": "Suresh Kumar",
@@ -121,6 +122,62 @@ async def seed():
                 "mobile": "9847055555",
                 "role": "OFFICER",
                 "department_id": dept_map["HLTH"].id,
+            },
+            {
+                "email": "edu.officer@demo.com",
+                "name": "Prof. Thomas Mathew",
+                "mobile": "9847011111",
+                "role": "OFFICER",
+                "department_id": dept_map["EDU"].id,
+            },
+            {
+                "email": "rev.officer@demo.com",
+                "name": "Geetha Krishnan",
+                "mobile": "9847022222",
+                "role": "OFFICER",
+                "department_id": dept_map["REV"].id,
+            },
+            {
+                "email": "water.officer@demo.com",
+                "name": "Rajeev Nambiar",
+                "mobile": "9847033333",
+                "role": "OFFICER",
+                "department_id": dept_map["WTR"].id,
+            },
+            {
+                "email": "kseb.officer@demo.com",
+                "name": "Vinod Chandran",
+                "mobile": "9847044444",
+                "role": "OFFICER",
+                "department_id": dept_map["KSEB"].id,
+            },
+            {
+                "email": "agri.officer@demo.com",
+                "name": "Suma Varma",
+                "mobile": "9847066666",
+                "role": "OFFICER",
+                "department_id": dept_map["AGRI"].id,
+            },
+            {
+                "email": "trans.officer@demo.com",
+                "name": "Deepa R. Nair",
+                "mobile": "9847077777",
+                "role": "OFFICER",
+                "department_id": dept_map["TRNS"].id,
+            },
+            {
+                "email": "forest.officer@demo.com",
+                "name": "Manoj K. V.",
+                "mobile": "9847088888",
+                "role": "OFFICER",
+                "department_id": dept_map["FRST"].id,
+            },
+            {
+                "email": "social.officer@demo.com",
+                "name": "Lakshmi Priya",
+                "mobile": "9847099999",
+                "role": "OFFICER",
+                "department_id": dept_map["SWD"].id,
             },
         ]
 
@@ -139,11 +196,28 @@ async def seed():
                 )
                 db.add(user)
                 await db.flush()
+            else:
+                user.name = u_spec["name"]
+                user.role = u_spec["role"]
+                user.department_id = u_spec["department_id"]
+                user.password_hash = demo_pw_hash
             user_map[u_spec["email"]] = user
         await db.commit()
 
         citizen = user_map["citizen@demo.com"]
         cmo = user_map["cmo@demo.com"]
+        officer_by_dept = {
+            "PWD": user_map["officer@demo.com"],
+            "HLTH": user_map["health.officer@demo.com"],
+            "EDU": user_map["edu.officer@demo.com"],
+            "REV": user_map["rev.officer@demo.com"],
+            "WTR": user_map["water.officer@demo.com"],
+            "KSEB": user_map["kseb.officer@demo.com"],
+            "AGRI": user_map["agri.officer@demo.com"],
+            "TRNS": user_map["trans.officer@demo.com"],
+            "FRST": user_map["forest.officer@demo.com"],
+            "SWD": user_map["social.officer@demo.com"],
+        }
         pwd_officer = user_map["officer@demo.com"]
         health_officer = user_map["health.officer@demo.com"]
 
@@ -187,12 +261,12 @@ async def seed():
                 "subject": "Frequent voltage fluctuations damaging appliances in Adoor",
                 "description": "Low voltage and frequent tripping from the 11kV feeder near Adoor Central has been affecting homes and small clinics for two weeks.",
                 "priority": "MEDIUM",
-                "status": "SUBMITTED",
-                "dept_code": None,
-                "days_ago": 2,
+                "status": "IN_PROGRESS",
+                "dept_code": "KSEB",
+                "days_ago": 6,
                 "is_escalated": False,
-                "cmo_remarks": None,
-                "action_report": None,
+                "cmo_remarks": "KSEB electrical division instructed to inspect line and balance phase loads.",
+                "action_report": "11kV line patrolling completed; transformer tap setting adjusted and load balanced.",
                 "resolution_details": None,
             },
             {
@@ -278,12 +352,12 @@ async def seed():
                 "subject": "Pending mutation and digital land tax update in Ottapalam village",
                 "description": "Application for pokkuvaravu mutation filed three months ago remains pending without field verification date.",
                 "priority": "LOW",
-                "status": "SUBMITTED",
-                "dept_code": None,
+                "status": "IN_PROGRESS",
+                "dept_code": "REV",
                 "days_ago": 3,
                 "is_escalated": False,
-                "cmo_remarks": None,
-                "action_report": None,
+                "cmo_remarks": "Village office directed to complete field verification within 48 hours.",
+                "action_report": "Notice issued to applicant; boundary survey and field verification scheduled.",
                 "resolution_details": None,
             },
             {
@@ -379,6 +453,21 @@ async def seed():
                 "resolution_details": "New interlocking tiles, tactile paving, and fresh zebra crossing markings laid.",
                 "feedback": {"rating": 5, "comment": "Very clean footpath and ramp installed."},
             },
+            {
+                "reference_id": "GRV-20261116-KNR16",
+                "district": "Kannur",
+                "category": "Wildlife & Forest",
+                "subject": "Wild boar menace damaging tapioca and plantain crops in Iritty",
+                "description": "Farming families in Iritty hilly area report severe nocturnal crop damage by wild boar herds; request immediate forest squad action.",
+                "priority": "HIGH",
+                "status": "SUBMITTED",
+                "dept_code": None,
+                "days_ago": 1,
+                "is_escalated": False,
+                "cmo_remarks": None,
+                "action_report": None,
+                "resolution_details": None,
+            },
         ]
 
         for spec in grievances_spec:
@@ -450,8 +539,8 @@ async def seed():
                     )
                 )
 
-                officer_actor = (
-                    health_officer if spec["dept_code"] == "HLTH" else pwd_officer
+                officer_actor = officer_by_dept.get(
+                    spec["dept_code"], pwd_officer
                 )
 
                 if spec["status"] == "UNDER_REVIEW":
@@ -525,7 +614,7 @@ async def seed():
             ])
 
         await db.commit()
-        print("PostgreSQL seed completed successfully (10 departments, 4 users, 15 grievances, contact enquiries).")
+        print("PostgreSQL seed completed successfully (10 departments, 12 demo users with all 10 dept officers, 16 grievances, contact enquiries).")
 
 
 if __name__ == "__main__":
