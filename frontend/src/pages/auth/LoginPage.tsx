@@ -1,8 +1,8 @@
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
-import { LogIn, Shield, UserCheck, Building2, User, Landmark } from 'lucide-react';
+import { LogIn, Shield, UserCheck, Building2, User, Landmark, Eye, EyeOff } from 'lucide-react';
 import toast from 'react-hot-toast';
 import PageLayout from '../../components/layout/PageLayout';
 import api from '../../lib/api';
@@ -35,6 +35,7 @@ function redirectPathForRole(role: string) {
 export default function LoginPage() {
   const navigate = useNavigate();
   const existingUser = getUser();
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     if (existingUser) {
@@ -84,9 +85,6 @@ export default function LoginPage() {
                 <Landmark className="w-6 h-6 text-[#f4d068]" />
               </div>
               <h1 className="text-2xl font-bold text-gray-900">Portal Login</h1>
-              <p className="text-sm text-gray-500 mt-1">
-                Sign in to access your Citizen, CMO, or Officer dashboard
-              </p>
             </div>
 
             <form
@@ -112,12 +110,27 @@ export default function LoginPage() {
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Password
                 </label>
-                <input
-                  type="password"
-                  {...register('password', { required: 'Password is required' })}
-                  placeholder="••••••••"
-                  className="w-full px-3.5 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1a5c38]"
-                />
+                <div className="relative">
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    {...register('password', { required: 'Password is required' })}
+                    placeholder="••••••••"
+                    className="w-full px-3.5 py-2.5 pr-11 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1a5c38]"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    className="absolute inset-y-0 right-0 flex items-center pr-3.5 text-gray-500 hover:text-gray-800 transition-colors focus:outline-none cursor-pointer"
+                    aria-label={showPassword ? 'Hide password' : 'Show password'}
+                    title={showPassword ? 'Hide password' : 'Show password'}
+                  >
+                    {showPassword ? (
+                      <EyeOff className="w-5 h-5" />
+                    ) : (
+                      <Eye className="w-5 h-5" />
+                    )}
+                  </button>
+                </div>
                 {errors.password && (
                   <p className="text-xs text-red-600 mt-1">{errors.password.message}</p>
                 )}
@@ -145,7 +158,7 @@ export default function LoginPage() {
           <div className="bg-amber-50 border border-amber-200 rounded-xl p-5 space-y-3.5">
             <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#9a7813]">
               <Shield className="w-4 h-4" />
-              Quick Demo Credentials (Password: Demo@1234)
+              Quick Demo Credentials
             </div>
 
             {/* Quick 1-Click Buttons for Core Portals */}
